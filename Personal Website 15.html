@@ -1,0 +1,886 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Interactive Portfolio Dashboard</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <style>
+        :root {
+            --primary-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            --secondary-gradient: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            --accent-gradient: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            --dark-gradient: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
+            --glass-bg: rgba(255, 255, 255, 0.1);
+            --glass-border: rgba(255, 255, 255, 0.2);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: var(--primary-gradient);
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        .glass-card {
+            background: var(--glass-bg);
+            backdrop-filter: blur(10px);
+            border: 1px solid var(--glass-border);
+            border-radius: 20px;
+            padding: 2rem;
+            transition: all 0.3s ease;
+            box-shadow: 0 8px 32px rgba(31, 38, 135, 0.37);
+        }
+
+        .glass-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 15px 50px rgba(31, 38, 135, 0.5);
+        }
+
+        .navbar {
+            background: rgba(255, 255, 255, 0.1) !important;
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 1rem 0;
+        }
+
+        .navbar-brand {
+            font-weight: 700;
+            color: white !important;
+            font-size: 1.8rem;
+        }
+
+        .navbar-nav .nav-link {
+            color: rgba(255, 255, 255, 0.9) !important;
+            font-weight: 500;
+            margin: 0 0.5rem;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .navbar-nav .nav-link:hover {
+            color: white !important;
+        }
+
+        .navbar-nav .nav-link::after {
+            content: '';
+            position: absolute;
+            width: 0;
+            height: 2px;
+            bottom: -5px;
+            left: 50%;
+            background: white;
+            transition: all 0.3s ease;
+        }
+
+        .navbar-nav .nav-link:hover::after {
+            width: 100%;
+            left: 0;
+        }
+
+        .hero-section {
+            padding: 6rem 0;
+            text-align: center;
+            color: white;
+        }
+
+        .hero-title {
+            font-size: 3.5rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            opacity: 0;
+            animation: fadeInUp 1s ease 0.2s forwards;
+        }
+
+        .hero-subtitle {
+            font-size: 1.3rem;
+            margin-bottom: 2rem;
+            opacity: 0;
+            animation: fadeInUp 1s ease 0.4s forwards;
+        }
+
+        .hero-description {
+            font-size: 1.1rem;
+            margin-bottom: 3rem;
+            opacity: 0;
+            animation: fadeInUp 1s ease 0.6s forwards;
+        }
+
+        .btn-gradient {
+            background: var(--secondary-gradient);
+            border: none;
+            padding: 1rem 2rem;
+            border-radius: 50px;
+            color: white;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-block;
+            opacity: 0;
+            animation: fadeInUp 1s ease 0.8s forwards;
+        }
+
+        .btn-gradient:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            color: white;
+        }
+
+        .stats-section {
+            padding: 4rem 0;
+        }
+
+        .stat-card {
+            text-align: center;
+            color: white;
+            margin-bottom: 2rem;
+        }
+
+        .stat-icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            background: var(--accent-gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .stat-number {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-label {
+            font-size: 1.1rem;
+            opacity: 0.9;
+        }
+
+        .features-section {
+            padding: 4rem 0;
+        }
+
+        .feature-card {
+            margin-bottom: 2rem;
+            color: white;
+            height: 100%;
+        }
+
+        .feature-icon {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+            color: #4facfe;
+        }
+
+        .feature-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+        }
+
+        .interactive-section {
+            padding: 4rem 0;
+        }
+
+        .theme-switcher {
+            position: fixed;
+            top: 50%;
+            right: 20px;
+            z-index: 1000;
+            background: var(--glass-bg);
+            backdrop-filter: blur(10px);
+            border: 1px solid var(--glass-border);
+            border-radius: 15px;
+            padding: 1rem;
+            transform: translateY(-50%);
+        }
+
+        .theme-btn {
+            display: block;
+            width: 40px;
+            height: 40px;
+            border: none;
+            border-radius: 50%;
+            margin: 0.5rem 0;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .theme-btn:hover {
+            transform: scale(1.1);
+        }
+
+        .theme-purple { background: var(--primary-gradient); }
+        .theme-pink { background: var(--secondary-gradient); }
+        .theme-blue { background: var(--accent-gradient); }
+        .theme-dark { background: var(--dark-gradient); }
+
+        .progress-section {
+            padding: 2rem 0;
+        }
+
+        .skill-item {
+            margin-bottom: 2rem;
+            color: white;
+        }
+
+        .skill-name {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+        }
+
+        .progress {
+            height: 8px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+        .progress-bar {
+            background: var(--accent-gradient);
+            transition: width 2s ease;
+        }
+
+        .contact-section {
+            padding: 4rem 0;
+        }
+
+        .contact-form {
+            color: white;
+        }
+
+        .form-control {
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 10px;
+            color: white;
+            padding: 1rem;
+        }
+
+        .form-control:focus {
+            background: rgba(255, 255, 255, 0.15);
+            border-color: #4facfe;
+            box-shadow: 0 0 0 0.2rem rgba(79, 172, 254, 0.25);
+            color: white;
+        }
+
+        .form-control::placeholder {
+            color: rgba(255, 255, 255, 0.7);
+        }
+
+        .modal-content {
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            border-radius: 20px;
+            color: white;
+        }
+
+        .modal-header {
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .modal-footer {
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-20px); }
+        }
+
+        .floating {
+            animation: float 6s ease-in-out infinite;
+        }
+
+        .typing-text {
+            border-right: 2px solid white;
+            animation: blink 1s infinite;
+        }
+
+        @keyframes blink {
+            0%, 50% { border-color: white; }
+            51%, 100% { border-color: transparent; }
+        }
+
+        @media (max-width: 768px) {
+            .hero-title {
+                font-size: 2.5rem;
+            }
+            
+            .hero-subtitle {
+                font-size: 1.1rem;
+            }
+            
+            .stat-number {
+                font-size: 2rem;
+            }
+            
+            .theme-switcher {
+                right: 10px;
+                padding: 0.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-light fixed-top">
+        <div class="container">
+            <a class="navbar-brand" href="#"><i class="fas fa-code"></i> DevPortfolio</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="#home">Home</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#about">About</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#skills">Skills</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#contact">Contact</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Theme Switcher -->
+    <div class="theme-switcher">
+        <button class="theme-btn theme-purple" data-theme="purple" title="Purple Theme"></button>
+        <button class="theme-btn theme-pink" data-theme="pink" title="Pink Theme"></button>
+        <button class="theme-btn theme-blue" data-theme="blue" title="Blue Theme"></button>
+        <button class="theme-btn theme-dark" data-theme="dark" title="Dark Theme"></button>
+    </div>
+
+    <!-- Hero Section -->
+    <section id="home" class="hero-section">
+        <div class="container">
+            <div class="row justify-content-center">
+                <div class="col-lg-8">
+                    <h1 class="hero-title">Welcome to the Future</h1>
+                    <p class="hero-subtitle">I'm a <span class="typing-text" id="typingText">Full Stack Developer</span></p>
+                    <p class="hero-description">
+                        Creating stunning, responsive, and user-friendly web experiences with modern technologies.
+                        Passionate about clean code, innovative design, and seamless user interactions.
+                    </p>
+                    <a href="#about" class="btn-gradient">Explore My Work</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Stats Section -->
+    <section class="stats-section">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-3 col-sm-6">
+                    <div class="stat-card">
+                        <div class="stat-icon">
+                            <i class="fas fa-project-diagram"></i>
+                        </div>
+                        <div class="stat-number" data-count="150">0</div>
+                        <div class="stat-label">Projects Completed</div>
+                    </div>
+                </div>
+                <div class="col-md-3 col-sm-6">
+                    <div class="stat-card">
+                        <div class="stat-icon">
+                            <i class="fas fa-users"></i>
+                        </div>
+                        <div class="stat-number" data-count="200">0</div>
+                        <div class="stat-label">Happy Clients</div>
+                    </div>
+                </div>
+                <div class="col-md-3 col-sm-6">
+                    <div class="stat-card">
+                        <div class="stat-icon">
+                            <i class="fas fa-clock"></i>
+                        </div>
+                        <div class="stat-number" data-count="2000">0</div>
+                        <div class="stat-label">Hours Coded</div>
+                    </div>
+                </div>
+                <div class="col-md-3 col-sm-6">
+                    <div class="stat-card">
+                        <div class="stat-icon">
+                            <i class="fas fa-award"></i>
+                        </div>
+                        <div class="stat-number" data-count="25">0</div>
+                        <div class="stat-label">Awards Won</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Features Section -->
+    <section id="about" class="features-section">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-4 col-md-6">
+                    <div class="glass-card feature-card">
+                        <div class="feature-icon">
+                            <i class="fas fa-mobile-alt"></i>
+                        </div>
+                        <h3 class="feature-title">Responsive Design</h3>
+                        <p>Creating seamless experiences across all devices with mobile-first approach and modern CSS frameworks.</p>
+                    </div>
+                </div>
+                <div class="col-lg-4 col-md-6">
+                    <div class="glass-card feature-card">
+                        <div class="feature-icon">
+                            <i class="fas fa-code"></i>
+                        </div>
+                        <h3 class="feature-title">Clean Code</h3>
+                        <p>Writing maintainable, scalable, and efficient code following industry best practices and standards.</p>
+                    </div>
+                </div>
+                <div class="col-lg-4 col-md-6">
+                    <div class="glass-card feature-card">
+                        <div class="feature-icon">
+                            <i class="fas fa-palette"></i>
+                        </div>
+                        <h3 class="feature-title">Modern UI/UX</h3>
+                        <p>Designing beautiful, intuitive interfaces with attention to detail and user experience.</p>
+                    </div>
+                </div>
+                <div class="col-lg-4 col-md-6">
+                    <div class="glass-card feature-card">
+                        <div class="feature-icon">
+                            <i class="fas fa-rocket"></i>
+                        </div>
+                        <h3 class="feature-title">Performance</h3>
+                        <p>Optimizing applications for speed and efficiency with modern build tools and techniques.</p>
+                    </div>
+                </div>
+                <div class="col-lg-4 col-md-6">
+                    <div class="glass-card feature-card">
+                        <div class="feature-icon">
+                            <i class="fas fa-shield-alt"></i>
+                        </div>
+                        <h3 class="feature-title">Security</h3>
+                        <p>Implementing robust security measures to protect applications and user data.</p>
+                    </div>
+                </div>
+                <div class="col-lg-4 col-md-6">
+                    <div class="glass-card feature-card">
+                        <div class="feature-icon">
+                            <i class="fas fa-cogs"></i>
+                        </div>
+                        <h3 class="feature-title">Scalability</h3>
+                        <p>Building applications that can grow and adapt to changing business requirements.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Skills Section -->
+    <section id="skills" class="progress-section">
+        <div class="container">
+            <div class="row justify-content-center">
+                <div class="col-lg-8">
+                    <div class="glass-card">
+                        <h2 class="text-center mb-4" style="color: white;">Technical Skills</h2>
+                        <div class="skill-item">
+                            <div class="skill-name">
+                                <span>HTML/CSS</span>
+                                <span>95%</span>
+                            </div>
+                            <div class="progress">
+                                <div class="progress-bar" data-width="95"></div>
+                            </div>
+                        </div>
+                        <div class="skill-item">
+                            <div class="skill-name">
+                                <span>JavaScript/TypeScript</span>
+                                <span>90%</span>
+                            </div>
+                            <div class="progress">
+                                <div class="progress-bar" data-width="90"></div>
+                            </div>
+                        </div>
+                        <div class="skill-item">
+                            <div class="skill-name">
+                                <span>React/Vue.js</span>
+                                <span>85%</span>
+                            </div>
+                            <div class="progress">
+                                <div class="progress-bar" data-width="85"></div>
+                            </div>
+                        </div>
+                        <div class="skill-item">
+                            <div class="skill-name">
+                                <span>Node.js/Express</span>
+                                <span>80%</span>
+                            </div>
+                            <div class="progress">
+                                <div class="progress-bar" data-width="80"></div>
+                            </div>
+                        </div>
+                        <div class="skill-item">
+                            <div class="skill-name">
+                                <span>Database Management</span>
+                                <span>75%</span>
+                            </div>
+                            <div class="progress">
+                                <div class="progress-bar" data-width="75"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Contact Section -->
+    <section id="contact" class="contact-section">
+        <div class="container">
+            <div class="row justify-content-center">
+                <div class="col-lg-8">
+                    <div class="glass-card">
+                        <h2 class="text-center mb-4" style="color: white;">Get In Touch</h2>
+                        <form class="contact-form" id="contactForm">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        <input type="text" class="form-control" placeholder="Your Name" required>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        <input type="email" class="form-control" placeholder="Your Email" required>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="mb-3">
+                                <input type="text" class="form-control" placeholder="Subject" required>
+                            </div>
+                            <div class="mb-3">
+                                <textarea class="form-control" rows="5" placeholder="Your Message" required></textarea>
+                            </div>
+                            <div class="text-center">
+                                <button type="submit" class="btn-gradient">Send Message</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Success Modal -->
+    <div class="modal fade" id="successModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Success!</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <p>Thank you for your message! I'll get back to you soon.</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // TypeScript-like JavaScript code (compiled to JS for browser compatibility)
+        
+        // Interface definitions (TypeScript style)
+        class ThemeManager {
+            constructor() {
+                this.themes = {
+                    purple: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+                    pink: 'linear-gradient(135deg, #f093fb 0%, #f5576c 100%)',
+                    blue: 'linear-gradient(135deg, #4facfe 0%, #00f2fe 100%)',
+                    dark: 'linear-gradient(135deg, #2c3e50 0%, #34495e 100%)'
+                };
+                this.init();
+            }
+            
+            init() {
+                const themeButtons = document.querySelectorAll('.theme-btn');
+                themeButtons.forEach(btn => {
+                    btn.addEventListener('click', () => {
+                        const theme = btn.getAttribute('data-theme');
+                        this.changeTheme(theme);
+                    });
+                });
+            }
+            
+            changeTheme(theme) {
+                if (this.themes[theme]) {
+                    document.body.style.background = this.themes[theme];
+                    
+                    // Add subtle animation
+                    document.body.style.transition = 'background 0.5s ease';
+                    
+                    // Store preference (would use localStorage in real app)
+                    console.log(`Theme changed to: ${theme}`);
+                }
+            }
+        }
+        
+        class CounterAnimation {
+            constructor() {
+                this.counters = document.querySelectorAll('.stat-number');
+                this.startAnimation();
+            }
+            
+            startAnimation() {
+                this.counters.forEach(counter => {
+                    const target = parseInt(counter.getAttribute('data-count'));
+                    const duration = 2000; // 2 seconds
+                    const step = target / (duration / 16); // 60fps
+                    let current = 0;
+                    
+                    const timer = setInterval(() => {
+                        current += step;
+                        if (current >= target) {
+                            current = target;
+                            clearInterval(timer);
+                        }
+                        counter.textContent = Math.floor(current).toString();
+                    }, 16);
+                });
+            }
+        }
+        
+        class TypingEffect {
+            constructor() {
+                this.element = document.getElementById('typingText');
+                this.texts = [
+                    'Full Stack Developer',
+                    'UI/UX Designer',
+                    'Frontend Specialist',
+                    'Problem Solver'
+                ];
+                this.currentIndex = 0;
+                this.currentText = '';
+                this.isDeleting = false;
+                this.typeSpeed = 100;
+                this.deleteSpeed = 50;
+                this.delayBetweenTexts = 2000;
+                
+                this.startTyping();
+            }
+            
+            startTyping() {
+                const fullText = this.texts[this.currentIndex];
+                
+                if (this.isDeleting) {
+                    this.currentText = fullText.substring(0, this.currentText.length - 1);
+                } else {
+                    this.currentText = fullText.substring(0, this.currentText.length + 1);
+                }
+                
+                this.element.textContent = this.currentText;
+                
+                let speed = this.isDeleting ? this.deleteSpeed : this.typeSpeed;
+                
+                if (!this.isDeleting && this.currentText === fullText) {
+                    speed = this.delayBetweenTexts;
+                    this.isDeleting = true;
+                } else if (this.isDeleting && this.currentText === '') {
+                    this.isDeleting = false;
+                    this.currentIndex = (this.currentIndex + 1) % this.texts.length;
+                    speed = this.typeSpeed;
+                }
+                
+                setTimeout(() => this.startTyping(), speed);
+            }
+        }
+        
+        class ProgressBarAnimation {
+            constructor() {
+                this.progressBars = document.querySelectorAll('.progress-bar');
+                this.animateOnScroll();
+            }
+            
+            animateOnScroll() {
+                const observer = new IntersectionObserver((entries) => {
+                    entries.forEach(entry => {
+                        if (entry.isIntersecting) {
+                            const progressBar = entry.target;
+                            const width = progressBar.getAttribute('data-width');
+                            progressBar.style.width = width + '%';
+                        }
+                    });
+                }, { threshold: 0.5 });
+                
+                this.progressBars.forEach(bar => {
+                    observer.observe(bar);
+                });
+            }
+        }
+        
+        class SmoothScroll {
+            constructor() {
+                this.init();
+            }
+            
+            init() {
+                const links = document.querySelectorAll('a[href^="#"]');
+                links.forEach(link => {
+                    link.addEventListener('click', (e) => {
+                        e.preventDefault();
+                        const targetId = link.getAttribute('href');
+                        const targetElement = document.querySelector(targetId);
+                        
+                        if (targetElement) {
+                            targetElement.scrollIntoView({
+                                behavior: 'smooth',
+                                block: 'start'
+                            });
+                        }
+                    });
+                });
+            }
+        }
+        
+        class FormHandler {
+            constructor() {
+                this.form = document.getElementById('contactForm');
+                this.init();
+            }
+            
+            init() {
+                this.form.addEventListener('submit', (e) => {
+                    e.preventDefault();
+                    this.handleSubmit();
+                });
+            }
+            
+            handleSubmit() {
+                // Simulate form submission
+                const formData = new FormData(this.form);
+                
+                // Show loading state
+                const submitBtn = this.form.querySelector('button[type="submit"]');
+                const originalText = submitBtn.textContent;
+                submitBtn.textContent = 'Sending...';
+                submitBtn.disabled = true;
+                
+                // Simulate API call
+                setTimeout(() => {
+                    submitBtn.textContent = originalText;
+                    submitBtn.disabled = false;
+                    
+                    // Reset form
+                    this.form.reset();
+                    
+                    // Show success modal
+                    const modal = new bootstrap.Modal(document.getElementById('successModal'));
+                    modal.show();
+                }, 1500);
+            }
+        }
+        
+        class FloatingElements {
+            constructor() {
+                this.addFloatingEffect();
+            }
+            
+            addFloatingEffect() {
+                const cards = document.querySelectorAll('.glass-card');
+                cards.forEach((card, index) => {
+                    card.style.animationDelay = `${index * 0.2}s`;
+                    card.classList.add('floating');
+                });
+            }
+        }
+        
+        // Initialize all components when DOM is loaded
+        document.addEventListener('DOMContentLoaded', () => {
+            new ThemeManager();
+            new CounterAnimation();
+            new TypingEffect();
+            new ProgressBarAnimation();
+            new SmoothScroll();
+            new FormHandler();
+            new FloatingElements();
+            
+            // Add parallax effect to hero section
+            window.addEventListener('scroll', () => {
+                const scrolled = window.pageYOffset;
+                const heroSection = document.querySelector('.hero-section');
+                if (heroSection) {
+                    heroSection.style.transform = `translateY(${scrolled * 0.5}px)`;
+                }
+            });
+            
+            // Add navbar background on scroll
+            window.addEventListener('scroll', () => {
+                const navbar = document.querySelector('.navbar');
+                if (window.scrollY > 50) {
+                    navbar.style.background = 'rgba(255, 255, 255, 0.15)';
+                } else {
+                    navbar.style.background = 'rgba(255, 255, 255, 0.1)';
+                }
+            });
+        });
+        
+        // Add mouse move effect for cards
+        document.addEventListener('mousemove', (e) => {
+            const cards = document.querySelectorAll('.glass-card');
+            cards.forEach(card => {
+                const rect = card.getBoundingClientRect();
+                const x = e.clientX - rect.left;
+                const y = e.clientY - rect.top;
+                
+                if (x >= 0 && x <= rect.width && y >= 0 && y <= rect.height) {
+                    const centerX = rect.width / 2;
+                    const centerY = rect.height / 2;
+                    const rotateX = (centerY - y) / centerY * 10;
+                    const rotateY = (x - centerX) / centerX * 10;
+                    
+                    card.style.transform = `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg)`;
+                    card.style.transition = 'none';
+                } else {
+                    card.style.transform = 'perspective(1000px) rotateX(0) rotateY(0)';
+                    card.style.transition = 'transform 0.5s ease';
+                }
+            });
+        });
+        // Reset cards when mouse leaves the window
+    document.addEventListener('mouseleave', () => {
+        const cards = document.querySelectorAll('.glass-card');
+        cards.forEach(card => {
+            card.style.transform = 'perspective(1000px) rotateX(0) rotateY(0)';
+            card.style.transition = 'transform 0.5s ease';
+        });
+    });
+</script>
+</body>
+</html>
