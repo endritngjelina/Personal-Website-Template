@@ -1,0 +1,788 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Alex Chen - Developer Portfolio</title>
+    <style>
+        :root {
+            /* Dark theme variables */
+            --bg-primary: #0a0b1e;
+            --bg-secondary: #1a1b3a;
+            --bg-card: #2a2b5a;
+            --text-primary: #ffffff;
+            --text-secondary: #b8b9d1;
+            --accent: #6366f1;
+            --accent-glow: #8b5cf6;
+            --lightning: #a855f7;
+            --shadow: rgba(99, 102, 241, 0.3);
+            --border: rgba(255, 255, 255, 0.1);
+        }
+
+        [data-theme="light"] {
+            /* Light theme variables */
+            --bg-primary: #fef7ff;
+            --bg-secondary: #f8fafc;
+            --bg-card: #ffffff;
+            --text-primary: #1e293b;
+            --text-secondary: #64748b;
+            --accent: #ec4899;
+            --accent-glow: #f472b6;
+            --lightning: #f97316;
+            --shadow: rgba(236, 72, 153, 0.2);
+            --border: rgba(0, 0, 0, 0.1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            overflow-x: hidden;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        /* Lightning Background Animation */
+        .lightning-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 1;
+            opacity: 0.6;
+        }
+
+        .lightning {
+            position: absolute;
+            width: 2px;
+            background: linear-gradient(90deg, transparent, var(--lightning), transparent);
+            animation: lightning 3s infinite;
+            border-radius: 2px;
+            box-shadow: 0 0 20px var(--lightning);
+        }
+
+        @keyframes lightning {
+            0% { height: 0; opacity: 0; }
+            10% { height: 200px; opacity: 1; }
+            20% { height: 400px; opacity: 0.8; }
+            30% { height: 600px; opacity: 0.6; }
+            40% { height: 300px; opacity: 0.4; }
+            50% { height: 100px; opacity: 0.2; }
+            100% { height: 0; opacity: 0; }
+        }
+
+        /* Floating particles */
+        .particle {
+            position: absolute;
+            width: 4px;
+            height: 4px;
+            background: var(--accent-glow);
+            border-radius: 50%;
+            animation: float 6s infinite ease-in-out;
+            box-shadow: 0 0 10px var(--accent-glow);
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0) rotate(0deg); opacity: 0; }
+            50% { transform: translateY(-100px) rotate(180deg); opacity: 1; }
+        }
+
+        /* Header and Navigation */
+        .header {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            padding: 1rem 2rem;
+            background: rgba(10, 11, 30, 0.95);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--border);
+            z-index: 1000;
+            transition: all 0.3s ease;
+        }
+
+        [data-theme="light"] .header {
+            background: rgba(254, 247, 255, 0.95);
+        }
+
+        .nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .logo {
+            font-size: 1.5rem;
+            font-weight: 700;
+            background: linear-gradient(45deg, var(--accent), var(--accent-glow));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+            list-style: none;
+        }
+
+        .nav-links a {
+            color: var(--text-secondary);
+            text-decoration: none;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .nav-links a:hover {
+            color: var(--accent);
+            transform: translateY(-2px);
+        }
+
+        .nav-links a::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: var(--accent);
+            transition: width 0.3s ease;
+        }
+
+        .nav-links a:hover::after {
+            width: 100%;
+        }
+
+        /* Theme Toggle */
+        .theme-toggle {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 50px;
+            padding: 0.5rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .theme-toggle:hover {
+            transform: scale(1.05);
+            box-shadow: 0 5px 20px var(--shadow);
+        }
+
+        .theme-icon {
+            width: 20px;
+            height: 20px;
+            transition: all 0.3s ease;
+        }
+
+        /* Hero Section */
+        .hero {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            z-index: 10;
+            padding: 0 2rem;
+        }
+
+        .hero-content {
+            text-align: center;
+            max-width: 800px;
+            animation: fadeInUp 1s ease;
+        }
+
+        .hero-title {
+            font-size: clamp(2.5rem, 8vw, 4rem);
+            font-weight: 800;
+            margin-bottom: 1rem;
+            background: linear-gradient(45deg, var(--accent), var(--accent-glow), var(--lightning));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            animation: glow 2s ease-in-out infinite alternate;
+        }
+
+        @keyframes glow {
+            from { filter: drop-shadow(0 0 20px var(--accent)); }
+            to { filter: drop-shadow(0 0 30px var(--lightning)); }
+        }
+
+        .hero-subtitle {
+            font-size: 1.2rem;
+            color: var(--text-secondary);
+            margin-bottom: 2rem;
+            animation: fadeIn 1s ease 0.5s both;
+        }
+
+        .cta-button {
+            display: inline-block;
+            padding: 1rem 2rem;
+            background: linear-gradient(45deg, var(--accent), var(--accent-glow));
+            color: white;
+            text-decoration: none;
+            border-radius: 50px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+            animation: fadeIn 1s ease 1s both;
+        }
+
+        .cta-button:hover {
+            transform: translateY(-3px) scale(1.05);
+            box-shadow: 0 10px 30px var(--shadow);
+        }
+
+        .cta-button::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+            transition: left 0.5s;
+        }
+
+        .cta-button:hover::before {
+            left: 100%;
+        }
+
+        /* Sections */
+        .section {
+            padding: 5rem 2rem;
+            max-width: 1200px;
+            margin: 0 auto;
+            position: relative;
+            z-index: 10;
+        }
+
+        .section-title {
+            font-size: 2.5rem;
+            text-align: center;
+            margin-bottom: 3rem;
+            background: linear-gradient(45deg, var(--accent), var(--accent-glow));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        /* Cards */
+        .cards-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin-top: 2rem;
+        }
+
+        .card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            padding: 2rem;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(45deg, transparent, var(--accent-glow), transparent);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .card:hover {
+            transform: translateY(-10px) scale(1.02);
+            box-shadow: 0 20px 40px var(--shadow);
+            border-color: var(--accent);
+        }
+
+        .card:hover::before {
+            opacity: 0.1;
+        }
+
+        .card-icon {
+            width: 50px;
+            height: 50px;
+            background: linear-gradient(45deg, var(--accent), var(--accent-glow));
+            border-radius: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 1.5rem;
+            font-size: 1.5rem;
+        }
+
+        .card h3 {
+            font-size: 1.25rem;
+            margin-bottom: 1rem;
+            color: var(--text-primary);
+        }
+
+        .card p {
+            color: var(--text-secondary);
+            line-height: 1.6;
+        }
+
+        /* Interactive Demo Section */
+        .demo-container {
+            background: var(--bg-secondary);
+            border-radius: 20px;
+            padding: 2rem;
+            margin: 2rem 0;
+            border: 1px solid var(--border);
+        }
+
+        .code-editor {
+            background: #1e1e2e;
+            border-radius: 10px;
+            padding: 1rem;
+            font-family: 'Monaco', 'Menlo', monospace;
+            font-size: 0.9rem;
+            color: #cdd6f4;
+            border: 1px solid var(--border);
+            resize: vertical;
+            min-height: 150px;
+            width: 100%;
+        }
+
+        .run-button {
+            background: linear-gradient(45deg, var(--accent), var(--accent-glow));
+            color: white;
+            border: none;
+            padding: 0.75rem 1.5rem;
+            border-radius: 10px;
+            cursor: pointer;
+            margin-top: 1rem;
+            transition: all 0.3s ease;
+        }
+
+        .run-button:hover {
+            transform: scale(1.05);
+            box-shadow: 0 5px 15px var(--shadow);
+        }
+
+        .output {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            padding: 1rem;
+            margin-top: 1rem;
+            min-height: 50px;
+            font-family: monospace;
+        }
+
+        /* Animations */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .fade-in-up {
+            animation: fadeInUp 0.6s ease forwards;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .nav-links {
+                display: none;
+            }
+            
+            .hero-title {
+                font-size: 2.5rem;
+            }
+            
+            .section {
+                padding: 3rem 1rem;
+            }
+        }
+
+        /* Accessibility */
+        @media (prefers-reduced-motion: reduce) {
+            *, *::before, *::after {
+                animation-duration: 0.01ms !important;
+                animation-iteration-count: 1 !important;
+                transition-duration: 0.01ms !important;
+            }
+        }
+
+        .sr-only {
+            position: absolute;
+            width: 1px;
+            height: 1px;
+            padding: 0;
+            margin: -1px;
+            overflow: hidden;
+            clip: rect(0, 0, 0, 0);
+            white-space: nowrap;
+            border: 0;
+        }
+
+        /* Sound indicator */
+        .sound-toggle {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+            margin-left: 1rem;
+        }
+
+        .sound-toggle:hover {
+            transform: scale(1.1);
+            box-shadow: 0 5px 15px var(--shadow);
+        }
+    </style>
+</head>
+<body data-theme="dark">
+    <!-- Lightning Background -->
+    <div class="lightning-bg" id="lightningBg"></div>
+
+    <!-- Header -->
+    <header class="header">
+        <nav class="nav">
+            <div class="logo">AC</div>
+            <ul class="nav-links">
+                <li><a href="#home">Home</a></li>
+                <li><a href="#about">About</a></li>
+                <li><a href="#projects">Projects</a></li>
+                <li><a href="#contact">Contact</a></li>
+            </ul>
+            <div style="display: flex; align-items: center;">
+                <button class="theme-toggle" id="themeToggle" aria-label="Toggle theme">
+                    <span class="theme-icon">🌙</span>
+                </button>
+                <button class="sound-toggle" id="soundToggle" aria-label="Toggle sound">
+                    <span>🔊</span>
+                </button>
+            </div>
+        </nav>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="hero" id="home">
+        <div class="hero-content">
+            <h1 class="hero-title">Alex Chen</h1>
+            <p class="hero-subtitle">Full-Stack Developer & Creative Technologist</p>
+            <a href="#projects" class="cta-button">View My Work</a>
+        </div>
+    </section>
+
+    <!-- About Section -->
+    <section class="section" id="about">
+        <h2 class="section-title">About Me</h2>
+        <div class="cards-grid">
+            <div class="card fade-in-up">
+                <div class="card-icon">💻</div>
+                <h3>Frontend Expertise</h3>
+                <p>Crafting beautiful, responsive user interfaces with modern JavaScript, CSS animations, and accessibility best practices.</p>
+            </div>
+            <div class="card fade-in-up">
+                <div class="card-icon">⚡</div>
+                <h3>Performance Focused</h3>
+                <p>Optimizing applications for speed and efficiency using modern build tools and performance monitoring techniques.</p>
+            </div>
+            <div class="card fade-in-up">
+                <div class="card-icon">🎨</div>
+                <h3>Design Minded</h3>
+                <p>Bridging the gap between design and development with attention to detail and user experience.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Projects Section -->
+    <section class="section" id="projects">
+        <h2 class="section-title">Featured Projects</h2>
+        <div class="cards-grid">
+            <div class="card fade-in-up">
+                <div class="card-icon">🚀</div>
+                <h3>E-Commerce Platform</h3>
+                <p>A full-featured online store with payment integration, inventory management, and real-time analytics built with Node.js and React.</p>
+            </div>
+            <div class="card fade-in-up">
+                <div class="card-icon">📱</div>
+                <h3>Mobile Weather App</h3>
+                <p>Cross-platform mobile application providing detailed weather forecasts with beautiful animations and offline support.</p>
+            </div>
+            <div class="card fade-in-up">
+                <div class="card-icon">🎮</div>
+                <h3>Interactive Dashboard</h3>
+                <p>Real-time data visualization dashboard with WebSocket connections, custom charts, and responsive design.</p>
+            </div>
+        </div>
+
+        <!-- Interactive Demo -->
+        <div class="demo-container">
+            <h3 style="margin-bottom: 1rem; color: var(--text-primary);">Try the Interactive Code Editor</h3>
+            <textarea class="code-editor" id="codeEditor" placeholder="// Write some JavaScript code here
+console.log('Hello, World!');
+const greeting = 'Welcome to my portfolio!';
+document.getElementById('output').innerHTML = greeting;">// Write some JavaScript code here
+console.log('Hello, World!');
+const greeting = 'Welcome to my portfolio!';
+document.body.style.background = 'linear-gradient(45deg, #6366f1, #8b5cf6)';</textarea>
+            <button class="run-button" id="runCode">Run Code</button>
+            <div class="output" id="output">Output will appear here...</div>
+        </div>
+    </section>
+
+    <!-- Contact Section -->
+    <section class="section" id="contact">
+        <h2 class="section-title">Let's Connect</h2>
+        <div class="cards-grid">
+            <div class="card fade-in-up">
+                <div class="card-icon">📧</div>
+                <h3>Email</h3>
+                <p>alex.chen@example.com</p>
+            </div>
+            <div class="card fade-in-up">
+                <div class="card-icon">💼</div>
+                <h3>LinkedIn</h3>
+                <p>linkedin.com/in/alexchen</p>
+            </div>
+            <div class="card fade-in-up">
+                <div class="card-icon">🐙</div>
+                <h3>GitHub</h3>
+                <p>github.com/alexchen</p>
+            </div>
+        </div>
+    </section>
+
+    <script>
+        // Theme Toggle
+        const themeToggle = document.getElementById('themeToggle');
+        const body = document.body;
+        const themeIcon = themeToggle.querySelector('.theme-icon');
+        
+        let currentTheme = 'dark';
+        
+        themeToggle.addEventListener('click', () => {
+            currentTheme = currentTheme === 'dark' ? 'light' : 'dark';
+            body.setAttribute('data-theme', currentTheme);
+            themeIcon.textContent = currentTheme === 'dark' ? '🌙' : '☀️';
+            
+            // Play theme switch sound
+            if (soundEnabled) playSound('switch');
+        });
+
+        // Sound System
+        let soundEnabled = true;
+        const soundToggle = document.getElementById('soundToggle');
+        
+        soundToggle.addEventListener('click', () => {
+            soundEnabled = !soundEnabled;
+            soundToggle.querySelector('span').textContent = soundEnabled ? '🔊' : '🔇';
+        });
+        
+        function playSound(type) {
+            if (!soundEnabled) return;
+            
+            const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+            const oscillator = audioContext.createOscillator();
+            const gainNode = audioContext.createGain();
+            
+            oscillator.connect(gainNode);
+            gainNode.connect(audioContext.destination);
+            
+            switch (type) {
+                case 'switch':
+                    oscillator.frequency.setValueAtTime(800, audioContext.currentTime);
+                    oscillator.frequency.exponentialRampToValueAtTime(400, audioContext.currentTime + 0.1);
+                    break;
+                case 'hover':
+                    oscillator.frequency.setValueAtTime(600, audioContext.currentTime);
+                    break;
+                case 'click':
+                    oscillator.frequency.setValueAtTime(1000, audioContext.currentTime);
+                    oscillator.frequency.exponentialRampToValueAtTime(200, audioContext.currentTime + 0.2);
+                    break;
+            }
+            
+            gainNode.gain.setValueAtTime(0.1, audioContext.currentTime);
+            gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.2);
+            
+            oscillator.start(audioContext.currentTime);
+            oscillator.stop(audioContext.currentTime + 0.2);
+        }
+
+        // Lightning Animation
+        function createLightning() {
+            const lightningBg = document.getElementById('lightningBg');
+            const lightning = document.createElement('div');
+            lightning.className = 'lightning';
+            
+            lightning.style.left = Math.random() * window.innerWidth + 'px';
+            lightning.style.animationDelay = Math.random() * 2 + 's';
+            lightning.style.animationDuration = (Math.random() * 2 + 2) + 's';
+            
+            lightningBg.appendChild(lightning);
+            
+            setTimeout(() => {
+                lightning.remove();
+            }, 5000);
+        }
+        
+        // Create lightning periodically
+        setInterval(createLightning, 2000);
+        
+        // Create floating particles
+        function createParticle() {
+            const particle = document.createElement('div');
+            particle.className = 'particle';
+            
+            particle.style.left = Math.random() * window.innerWidth + 'px';
+            particle.style.top = window.innerHeight + 'px';
+            particle.style.animationDelay = Math.random() * 2 + 's';
+            
+            document.body.appendChild(particle);
+            
+            setTimeout(() => {
+                particle.remove();
+            }, 6000);
+        }
+        
+        setInterval(createParticle, 1000);
+
+        // Code Editor Functionality
+        const codeEditor = document.getElementById('codeEditor');
+        const runButton = document.getElementById('runCode');
+        const output = document.getElementById('output');
+        
+        runButton.addEventListener('click', () => {
+            const code = codeEditor.value;
+            output.innerHTML = '';
+            
+            // Create a safe execution environment
+            try {
+                // Capture console.log output
+                const originalLog = console.log;
+                const logs = [];
+                console.log = (...args) => {
+                    logs.push(args.join(' '));
+                };
+                
+                // Execute the code
+                const result = eval(code);
+                
+                // Restore console.log
+                console.log = originalLog;
+                
+                // Display output
+                if (logs.length > 0) {
+                    output.innerHTML = logs.join('<br>');
+                } else if (result !== undefined) {
+                    output.innerHTML = String(result);
+                } else {
+                    output.innerHTML = 'Code executed successfully!';
+                }
+                
+                if (soundEnabled) playSound('click');
+            } catch (error) {
+                output.innerHTML = `<span style="color: #ef4444;">Error: ${error.message}</span>`;
+            }
+        });
+
+        // Smooth scrolling for navigation links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+                if (soundEnabled) playSound('click');
+            });
+        });
+
+        // Add hover sounds to interactive elements
+        document.querySelectorAll('.card, .cta-button, .run-button').forEach(element => {
+            element.addEventListener('mouseenter', () => {
+                if (soundEnabled) playSound('hover');
+            });
+        });
+
+        // Intersection Observer for fade-in animations
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px'
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.style.opacity = '1';
+                    entry.target.style.transform = 'translateY(0)';
+                }
+            });
+        }, observerOptions);
+
+        // Observe all cards for animation
+        document.querySelectorAll('.card').forEach(card => {
+            card.style.opacity = '0';
+            card.style.transform = 'translateY(30px)';
+            card.style.transition = 'all 0.6s ease';
+            observer.observe(card);
+        });
+
+        // Keyboard navigation support
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Tab') {
+                document.body.classList.add('keyboard-nav');
+            }
+        });
+
+        document.addEventListener('mousedown', () => {
+            document.body.classList.remove('keyboard-nav');
+        });
+
+        // Add focus styles for keyboard navigation
+        const style = document.createElement('style');
+        style.textContent = `
+            .keyboard-nav *:focus {
+                outline: 2px solid var(--accent) !important;
+                outline-offset: 2px !important;
+            }
+        `;
+        document.head.appendChild(style);
+    </script>
+</body>
+</html>
