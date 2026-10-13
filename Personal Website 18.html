@@ -1,0 +1,1047 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Frontend Mastery - Interactive Developer Portfolio</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: #fff;
+            overflow-x: hidden;
+            scroll-behavior: smooth;
+            transition: background 0.5s ease, filter 0.5s ease;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        /* Animated Background */
+        .bg-animation {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            opacity: 0.1;
+            transition: transform 0.3s ease;
+        }
+
+        .particle {
+            position: absolute;
+            width: 4px;
+            height: 4px;
+            background: rgba(255, 255, 255, 0.8);
+            border-radius: 50%;
+            animation: float 6s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0px) rotate(0deg); }
+            50% { transform: translateY(-20px) rotate(180deg); }
+        }
+
+        /* Header */
+        header {
+            text-align: center;
+            padding: 80px 0;
+            position: relative;
+        }
+
+        .hero-title {
+            font-size: clamp(2.5rem, 8vw, 5rem);
+            font-weight: 900;
+            background: linear-gradient(45deg, #ff6b6b, #4ecdc4, #45b7d1, #96ceb4);
+            background-size: 400% 400%;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            animation: gradientShift 4s ease infinite;
+            margin-bottom: 20px;
+            text-shadow: 0 0 30px rgba(255, 255, 255, 0.3);
+        }
+
+        @keyframes gradientShift {
+            0%, 100% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+        }
+
+        .hero-subtitle {
+            font-size: 1.5rem;
+            opacity: 0.9;
+            margin-bottom: 40px;
+            animation: fadeInUp 1s ease 0.5s both;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Navigation */
+        .nav-container {
+            position: sticky;
+            top: 20px;
+            z-index: 100;
+            margin-bottom: 40px;
+        }
+
+        .nav {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(20px);
+            border-radius: 50px;
+            padding: 15px;
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+        }
+
+        .nav button {
+            background: transparent;
+            border: none;
+            color: rgba(255, 255, 255, 0.8);
+            padding: 12px 24px;
+            border-radius: 25px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .nav button:hover {
+            color: #fff;
+            background: rgba(255, 255, 255, 0.1);
+            transform: translateY(-2px);
+        }
+
+        .nav button.active {
+            background: linear-gradient(45deg, #ff6b6b, #4ecdc4);
+            color: #fff;
+            box-shadow: 0 4px 15px rgba(255, 107, 107, 0.3);
+        }
+
+        /* Concept Cards */
+        .concepts-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 30px;
+            margin-bottom: 60px;
+        }
+
+        .concept-card {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(20px);
+            border-radius: 20px;
+            padding: 30px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            transition: all 0.4s ease;
+            position: relative;
+            overflow: hidden;
+            cursor: pointer;
+        }
+
+        .concept-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+            transition: left 0.5s;
+        }
+
+        .concept-card:hover::before {
+            left: 100%;
+        }
+
+        .concept-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+            border-color: rgba(255, 255, 255, 0.4);
+        }
+
+        .concept-header {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .concept-icon {
+            width: 50px;
+            height: 50px;
+            border-radius: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            background: linear-gradient(45deg, #ff6b6b, #4ecdc4);
+            box-shadow: 0 4px 15px rgba(255, 107, 107, 0.3);
+        }
+
+        .concept-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 5px;
+        }
+
+        .concept-description {
+            opacity: 0.9;
+            line-height: 1.6;
+            margin-bottom: 20px;
+        }
+
+        .concept-demo {
+            padding: 20px;
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 15px;
+            margin-bottom: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .code-snippet {
+            background: rgba(0, 0, 0, 0.4);
+            padding: 15px;
+            border-radius: 10px;
+            font-family: 'Fira Code', monospace;
+            font-size: 0.9rem;
+            overflow-x: auto;
+            border-left: 4px solid #4ecdc4;
+        }
+
+        /* Interactive Demos */
+        .flex-demo {
+            display: flex;
+            gap: 10px;
+            justify-content: space-around;
+            align-items: center;
+            height: 100px;
+        }
+
+        .flex-item {
+            background: linear-gradient(45deg, #ff6b6b, #4ecdc4);
+            padding: 10px 20px;
+            border-radius: 10px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .flex-item:hover {
+            transform: scale(1.1) rotate(5deg);
+            box-shadow: 0 5px 15px rgba(255, 107, 107, 0.4);
+        }
+
+        .grid-demo {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+            height: 120px;
+        }
+
+        .grid-item {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .grid-item:hover {
+            transform: scale(1.05);
+            background: linear-gradient(135deg, #ff6b6b, #4ecdc4);
+        }
+
+        .animation-demo {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100px;
+        }
+
+        .bouncing-ball {
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(45deg, #ff6b6b, #4ecdc4);
+            border-radius: 50%;
+            animation: bounce 1s ease-in-out infinite;
+        }
+
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-30px); }
+        }
+
+        .responsive-demo {
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+
+        .responsive-demo:hover {
+            background: linear-gradient(45deg, #ff6b6b, #4ecdc4);
+        }
+
+        /* Form Demo */
+        .form-demo {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .form-group {
+            position: relative;
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 15px;
+            border: 2px solid rgba(255, 255, 255, 0.2);
+            border-radius: 10px;
+            background: rgba(255, 255, 255, 0.1);
+            color: #fff;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+        }
+
+        .form-input:focus {
+            outline: none;
+            border-color: #4ecdc4;
+            background: rgba(255, 255, 255, 0.15);
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(78, 205, 196, 0.3);
+        }
+
+        .form-input::placeholder {
+            color: rgba(255, 255, 255, 0.6);
+        }
+
+        .submit-btn {
+            background: linear-gradient(45deg, #ff6b6b, #4ecdc4);
+            border: none;
+            padding: 15px 30px;
+            border-radius: 10px;
+            color: #fff;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 1rem;
+        }
+
+        .submit-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(255, 107, 107, 0.4);
+        }
+
+        /* Performance Metrics */
+        .performance-demo {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+            gap: 15px;
+        }
+
+        .metric {
+            text-align: center;
+            padding: 15px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            transition: all 0.3s ease;
+        }
+
+        .metric:hover {
+            background: rgba(255, 255, 255, 0.2);
+            transform: translateY(-5px);
+        }
+
+        .metric-value {
+            font-size: 2rem;
+            font-weight: 900;
+            color: #4ecdc4;
+            display: block;
+        }
+
+        .metric-label {
+            font-size: 0.9rem;
+            opacity: 0.8;
+            margin-top: 5px;
+        }
+
+        /* API Demo */
+        .api-demo {
+            text-align: center;
+        }
+
+        .api-result {
+            background: rgba(0, 0, 0, 0.3);
+            padding: 20px;
+            border-radius: 10px;
+            margin: 15px 0;
+            min-height: 60px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+        }
+
+        .loading {
+            animation: pulse 1.5s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        /* Footer */
+        footer {
+            text-align: center;
+            padding: 60px 0;
+            background: rgba(0, 0, 0, 0.2);
+            margin-top: 80px;
+        }
+
+        .footer-content {
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .footer-title {
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 20px;
+            background: linear-gradient(45deg, #ff6b6b, #4ecdc4);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .social-links {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin-top: 30px;
+        }
+
+        .social-link {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 50px;
+            height: 50px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 50%;
+            color: #fff;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            font-size: 1.2rem;
+        }
+
+        .social-link:hover {
+            background: linear-gradient(45deg, #ff6b6b, #4ecdc4);
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(255, 107, 107, 0.3);
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .concepts-grid {
+                grid-template-columns: 1fr;
+                gap: 20px;
+            }
+            
+            .nav {
+                flex-wrap: wrap;
+                gap: 5px;
+            }
+            
+            .nav button {
+                padding: 8px 16px;
+                font-size: 0.9rem;
+            }
+            
+            .hero-title {
+                font-size: 2.5rem;
+            }
+            
+            .concept-card {
+                padding: 20px;
+            }
+        }
+
+        /* Accessibility */
+        @media (prefers-reduced-motion: reduce) {
+            * {
+                animation-duration: 0.01ms !important;
+                animation-iteration-count: 1 !important;
+                transition-duration: 0.01ms !important;
+            }
+        }
+
+        /* Focus styles for accessibility */
+        button:focus,
+        input:focus {
+            outline: 2px solid #4ecdc4;
+            outline-offset: 2px;
+        }
+
+        /* High contrast mode */
+        body.high-contrast {
+            background: #000 !important;
+            filter: contrast(150%) brightness(120%);
+        }
+    </style>
+</head>
+<body>
+    <div class="bg-animation" id="bgAnimation"></div>
+    
+    <header>
+        <div class="container">
+            <h1 class="hero-title">Frontend Mastery</h1>
+            <p class="hero-subtitle">Interactive Guide to Modern Web Development</p>
+        </div>
+    </header>
+
+    <div class="nav-container">
+        <div class="container">
+            <nav class="nav">
+                <button class="nav-btn active" data-section="all">All Concepts</button>
+                <button class="nav-btn" data-section="css">CSS</button>
+                <button class="nav-btn" data-section="js">JavaScript</button>
+                <button class="nav-btn" data-section="performance">Performance</button>
+                <button class="nav-btn" data-section="accessibility">A11y</button>
+            </nav>
+        </div>
+    </div>
+
+    <main class="container">
+        <div class="concepts-grid" id="conceptsGrid">
+            <!-- Flexbox Concept -->
+            <div class="concept-card" data-category="css">
+                <div class="concept-header">
+                    <div class="concept-icon">📐</div>
+                    <div>
+                        <h3 class="concept-title">Flexbox Layout</h3>
+                        <p>Modern one-dimensional layout method</p>
+                    </div>
+                </div>
+                <p class="concept-description">
+                    Flexbox provides an efficient way to arrange, distribute, and align items in a container, even when their size is unknown or dynamic.
+                </p>
+                <div class="concept-demo">
+                    <div class="flex-demo">
+                        <div class="flex-item">Item 1</div>
+                        <div class="flex-item">Item 2</div>
+                        <div class="flex-item">Item 3</div>
+                    </div>
+                </div>
+                <div class="code-snippet">
+.container {
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+}
+                </div>
+            </div>
+
+            <!-- CSS Grid Concept -->
+            <div class="concept-card" data-category="css">
+                <div class="concept-header">
+                    <div class="concept-icon">⚏</div>
+                    <div>
+                        <h3 class="concept-title">CSS Grid</h3>
+                        <p>Two-dimensional layout system</p>
+                    </div>
+                </div>
+                <p class="concept-description">
+                    CSS Grid Layout excels at dividing a page into major regions and defining size, position, and layer relationships between parts of a layout.
+                </p>
+                <div class="concept-demo">
+                    <div class="grid-demo">
+                        <div class="grid-item">1</div>
+                        <div class="grid-item">2</div>
+                        <div class="grid-item">3</div>
+                        <div class="grid-item">4</div>
+                        <div class="grid-item">5</div>
+                        <div class="grid-item">6</div>
+                    </div>
+                </div>
+                <div class="code-snippet">
+.grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+}
+                </div>
+            </div>
+
+            <!-- CSS Animations -->
+            <div class="concept-card" data-category="css">
+                <div class="concept-header">
+                    <div class="concept-icon">🎭</div>
+                    <div>
+                        <h3 class="concept-title">CSS Animations</h3>
+                        <p>Smooth transitions and keyframe animations</p>
+                    </div>
+                </div>
+                <p class="concept-description">
+                    CSS animations make it possible to animate transitions from one CSS style configuration to another using keyframes.
+                </p>
+                <div class="concept-demo">
+                    <div class="animation-demo">
+                        <div class="bouncing-ball"></div>
+                    </div>
+                </div>
+                <div class="code-snippet">
+@keyframes bounce {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-30px); }
+}
+.ball { animation: bounce 1s infinite; }
+                </div>
+            </div>
+
+            <!-- Responsive Design -->
+            <div class="concept-card" data-category="css">
+                <div class="concept-header">
+                    <div class="concept-icon">📱</div>
+                    <div>
+                        <h3 class="concept-title">Responsive Design</h3>
+                        <p>Adaptive layouts for all devices</p>
+                    </div>
+                </div>
+                <p class="concept-description">
+                    Responsive web design ensures that web pages render well on various devices and screen sizes using flexible layouts and media queries.
+                </p>
+                <div class="concept-demo">
+                    <div class="responsive-demo">
+                        <p>📱 Mobile First Design</p>
+                        <p>Resize window to see responsiveness</p>
+                    </div>
+                </div>
+                <div class="code-snippet">
+@media (max-width: 768px) {
+  .container { 
+    grid-template-columns: 1fr; 
+  }
+}
+                </div>
+            </div>
+
+            <!-- JavaScript ES6+ Features -->
+            <div class="concept-card" data-category="js">
+                <div class="concept-header">
+                    <div class="concept-icon">⚡</div>
+                    <div>
+                        <h3 class="concept-title">ES6+ Features</h3>
+                        <p>Modern JavaScript syntax and features</p>
+                    </div>
+                </div>
+                <p class="concept-description">
+                    ES6+ introduces powerful features like arrow functions, destructuring, async/await, and modules that make JavaScript more efficient and readable.
+                </p>
+                <div class="concept-demo">
+                    <button class="submit-btn" onclick="demonstrateES6()">Demo ES6+ Features</button>
+                    <div id="es6Result" class="api-result" style="margin-top: 15px;"></div>
+                </div>
+                <div class="code-snippet">
+const [data, setData] = useState();
+const fetchData = async () => {
+  const response = await fetch('/api');
+  return response.json();
+};
+                </div>
+            </div>
+
+            <!-- DOM Manipulation -->
+            <div class="concept-card" data-category="js">
+                <div class="concept-header">
+                    <div class="concept-icon">🔧</div>
+                    <div>
+                        <h3 class="concept-title">DOM Manipulation</h3>
+                        <p>Dynamic content and user interaction</p>
+                    </div>
+                </div>
+                <p class="concept-description">
+                    The Document Object Model (DOM) allows JavaScript to dynamically change HTML content, attributes, and styles in response to user interactions.
+                </p>
+                <div class="concept-demo">
+                    <div class="form-demo">
+                        <input type="text" class="form-input" placeholder="Enter your name" id="nameInput">
+                        <button class="submit-btn" onclick="updateGreeting()">Update Greeting</button>
+                        <div id="greeting" class="api-result">Hello, Frontend Developer! 👋</div>
+                    </div>
+                </div>
+                <div class="code-snippet">
+document.getElementById('element')
+  .addEventListener('click', function() {
+    this.style.transform = 'scale(1.1)';
+  });
+                </div>
+            </div>
+
+            <!-- Async JavaScript -->
+            <div class="concept-card" data-category="js">
+                <div class="concept-header">
+                    <div class="concept-icon">⏱️</div>
+                    <div>
+                        <h3 class="concept-title">Async JavaScript</h3>
+                        <p>Promises, async/await, and API calls</p>
+                    </div>
+                </div>
+                <p class="concept-description">
+                    Asynchronous JavaScript enables non-blocking operations, allowing web applications to remain responsive while handling time-consuming tasks.
+                </p>
+                <div class="concept-demo">
+                    <div class="api-demo">
+                        <button class="submit-btn" onclick="fetchRandomQuote()">Fetch Random Quote</button>
+                        <div id="quoteResult" class="api-result">Click to fetch an inspiring quote!</div>
+                    </div>
+                </div>
+                <div class="code-snippet">
+async function fetchData() {
+  try {
+    const response = await fetch(url);
+    const data = await response.json();
+    return data;
+  } catch (error) {
+    console.error('Error:', error);
+  }
+}
+                </div>
+            </div>
+
+            <!-- Performance Optimization -->
+            <div class="concept-card" data-category="performance">
+                <div class="concept-header">
+                    <div class="concept-icon">🚀</div>
+                    <div>
+                        <h3 class="concept-title">Performance Optimization</h3>
+                        <p>Core Web Vitals and optimization techniques</p>
+                    </div>
+                </div>
+                <p class="concept-description">
+                    Web performance optimization focuses on making websites load faster and provide better user experience through various techniques and metrics.
+                </p>
+                <div class="concept-demo">
+                    <div class="performance-demo">
+                        <div class="metric">
+                            <span class="metric-value">98</span>
+                            <span class="metric-label">Lighthouse Score</span>
+                        </div>
+                        <div class="metric">
+                            <span class="metric-value">1.2s</span>
+                            <span class="metric-label">FCP</span>
+                        </div>
+                        <div class="metric">
+                            <span class="metric-value">0.8s</span>
+                            <span class="metric-label">LCP</span>
+                        </div>
+                        <div class="metric">
+                            <span class="metric-value">0.05</span>
+                            <span class="metric-label">CLS</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="code-snippet">
+// Lazy loading images
+const img = document.querySelector('img');
+img.loading = 'lazy';
+
+// Code splitting
+const module = await import('./module.js');
+                </div>
+            </div>
+
+            <!-- Accessibility -->
+            <div class="concept-card" data-category="accessibility">
+                <div class="concept-header">
+                    <div class="concept-icon">♿</div>
+                    <div>
+                        <h3 class="concept-title">Web Accessibility</h3>
+                        <p>WCAG guidelines and inclusive design</p>
+                    </div>
+                </div>
+                <p class="concept-description">
+                    Web accessibility ensures that websites and web applications are usable by people with disabilities, following WCAG guidelines for inclusive design.
+                </p>
+                <div class="concept-demo">
+                    <div style="text-align: center; padding: 20px;">
+                        <button class="submit-btn" onclick="toggleHighContrast()" aria-label="Toggle high contrast mode">
+                            Toggle High Contrast
+                        </button>
+                        <p style="margin-top: 15px; opacity: 0.9;">
+                            ✅ Semantic HTML<br>
+                            ✅ ARIA Labels<br>
+                            ✅ Keyboard Navigation<br>
+                            ✅ Screen Reader Support
+                        </p>
+                    </div>
+                </div>
+                <div class="code-snippet">
+&lt;button aria-label="Close dialog" 
+        aria-describedby="close-help"&gt;
+  ×
+&lt;/button&gt;
+&lt;div id="close-help" class="sr-only"&gt;
+  Closes the current dialog
+&lt;/div&gt;
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <footer>
+        <div class="container">
+            <div class="footer-content">
+                <h2 class="footer-title">Ready to Build Amazing Things?</h2>
+                <p>This portfolio demonstrates mastery of modern frontend technologies including responsive design, CSS Grid/Flexbox, JavaScript ES6+, performance optimization, and accessibility standards.</p>
+                <div class="social-links">
+                    <a href="#" class="social-link" aria-label="GitHub">🐙</a>
+                    <a href="#" class="social-link" aria-label="LinkedIn">💼</a>
+                    <a href="#" class="social-link" aria-label="Portfolio">🌐</a>
+                    <a href="#" class="social-link" aria-label="Email">📧</a>
+                </div>
+                <p style="margin-top: 30px; opacity: 0.7;">&copy; 2025 Frontend Developer Portfolio</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Create animated background particles
+        function createParticles() {
+            const bgAnimation = document.getElementById('bgAnimation');
+            for (let i = 0; i < 50; i++) {
+                const particle = document.createElement('div');
+                particle.className = 'particle';
+                particle.style.left = Math.random() * 100 + '%';
+                particle.style.top = Math.random() * 100 + '%';
+                particle.style.animationDelay = Math.random() * 6 + 's';
+                particle.style.animationDuration = (Math.random() * 3 + 3) + 's';
+                bgAnimation.appendChild(particle);
+            }
+        }
+
+        // Navigation functionality
+        function initNavigation() {
+            const navButtons = document.querySelectorAll('.nav-btn');
+            const conceptCards = document.querySelectorAll('.concept-card');
+
+            navButtons.forEach(button => {
+                button.addEventListener('click', () => {
+                    // Update active button
+                    navButtons.forEach(btn => btn.classList.remove('active'));
+                    button.classList.add('active');
+
+                    // Filter cards
+                    const category = button.dataset.section;
+                    conceptCards.forEach(card => {
+                        if (category === 'all' || card.dataset.category === category) {
+                            card.style.display = 'block';
+                            card.style.animation = 'fadeInUp 0.5s ease forwards';
+                        } else {
+                            card.style.display = 'none';
+                        }
+                    });
+                });
+            });
+        }
+
+        // ES6+ Demo
+        function demonstrateES6() {
+            const result = document.getElementById('es6Result');
+            result.innerHTML = 'Loading ES6+ features...';
+            result.classList.add('loading');
+
+            // Simulate async operation
+            setTimeout(() => {
+                const features = [
+                    'Arrow Functions: () => {}',
+                    'Template Literals: `Hello ${name}`',
+                    'Destructuring: const {x, y} = obj',
+                    'Async/Await: await fetch()',
+                    'Modules: import/export'
+                ];
+                
+                const randomFeature = features[Math.floor(Math.random() * features.length)];
+                result.innerHTML = `✨ ${randomFeature}`;
+                result.classList.remove('loading');
+            }, 1000);
+        }
+
+        // DOM Manipulation Demo
+        function updateGreeting() {
+            const nameInput = document.getElementById('nameInput');
+            const greeting = document.getElementById('greeting');
+            const name = nameInput.value.trim() || 'Frontend Developer';
+            
+            greeting.style.transform = 'scale(0.8)';
+            greeting.style.opacity = '0.5';
+            
+            setTimeout(() => {
+                greeting.innerHTML = `Hello, ${name}! 👋✨`;
+                greeting.style.transform = 'scale(1)';
+                greeting.style.opacity = '1';
+            }, 200);
+        }
+
+        // Async JavaScript Demo
+        async function fetchRandomQuote() {
+            const result = document.getElementById('quoteResult');
+            result.innerHTML = 'Fetching inspiration...';
+            result.classList.add('loading');
+
+            try {
+                // Simulate API call with random quotes
+                const quotes = [
+                    "Code is like humor. When you have to explain it, it's bad. - Cory House",
+                    "First, solve the problem. Then, write the code. - John Johnson",
+                    "The best way to get started is to quit talking and begin doing. - Walt Disney",
+                    "Innovation distinguishes between a leader and a follower. - Steve Jobs",
+                    "The only way to do great work is to love what you do. - Steve Jobs"
+                ];
+
+                // Simulate network delay
+                await new Promise(resolve => setTimeout(resolve, 1500));
+                
+                const randomQuote = quotes[Math.floor(Math.random() * quotes.length)];
+                result.innerHTML = `💡 "${randomQuote}"`;
+                result.classList.remove('loading');
+            } catch (error) {
+                result.innerHTML = '❌ Failed to fetch quote. Try again!';
+                result.classList.remove('loading');
+            }
+        }
+
+        // High contrast toggle for accessibility demo
+        let highContrastMode = false;
+        function toggleHighContrast() {
+            highContrastMode = !highContrastMode;
+            const body = document.body;
+            
+            if (highContrastMode) {
+                body.classList.add('high-contrast');
+            } else {
+                body.classList.remove('high-contrast');
+            }
+        }
+
+        // Intersection Observer for scroll animations
+        function initScrollAnimations() {
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.style.opacity = '1';
+                        entry.target.style.transform = 'translateY(0)';
+                    }
+                });
+            }, {
+                threshold: 0.1,
+                rootMargin: '0px 0px -50px 0px'
+            });
+
+            document.querySelectorAll('.concept-card').forEach(card => {
+                card.style.opacity = '0';
+                card.style.transform = 'translateY(30px)';
+                card.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
+                observer.observe(card);
+            });
+        }
+
+        // Performance monitoring
+        function initPerformanceMonitoring() {
+            // Measure page load performance
+            window.addEventListener('load', () => {
+                if ('performance' in window) {
+                    const perfData = performance.getEntriesByType('navigation')[0];
+                    const loadTime = Math.round(perfData.loadEventEnd - perfData.loadEventStart);
+                    
+                    // Update performance metrics in real-time
+                    const metrics = document.querySelectorAll('.metric-value');
+                    if (metrics.length >= 4) {
+                        metrics[1].textContent = `${(loadTime / 1000).toFixed(1)}s`;
+                    }
+                }
+            });
+        }
+
+        // Keyboard navigation support
+        function initKeyboardNavigation() {
+            document.addEventListener('keydown', (e) => {
+                // Tab navigation enhancement
+                if (e.key === 'Tab') {
+                    document.body.classList.add('keyboard-navigation');
+                }
+                
+                // ESC to close/reset demos
+                if (e.key === 'Escape') {
+                    const activeElements = document.querySelectorAll('.form-input:focus, .submit-btn:focus');
+                    activeElements.forEach(el => el.blur());
+                }
+            });
+
+            document.addEventListener('mousedown', () => {
+                document.body.classList.remove('keyboard-navigation');
+            });
+        }
+
+        // Touch/mobile enhancements
+        function initTouchEnhancements() {
+            let touchStartY = 0;
+            
+            document.addEventListener('touchstart', (e) => {
+                touchStartY = e.touches[0].clientY;
+            });
+
+            document.addEventListener('touchmove', (e) => {
+                const touchEndY = e.touches[0].clientY;
+                const deltaY = touchStartY - touchEndY;
+                
+                // Add subtle parallax effect on mobile scroll
+                const bgAnimation = document.getElementById('bgAnimation');
+                bgAnimation.style.transform = `translateY(${deltaY * 0.1}px)`;
+            });
+        }
+
+        // Initialize all functionality when DOM is loaded
+        document.addEventListener('DOMContentLoaded', () => {
+            createParticles();
+            initNavigation();
+            initScrollAnimations();
+            initPerformanceMonitoring();
+            initKeyboardNavigation();
+            initTouchEnhancements();
+            
+            // Add loading complete class for final animations
+            setTimeout(() => {
+                document.body.classList.add('loaded');
+            }, 500);
+        });
+    </script>
+</body>
+</html>
