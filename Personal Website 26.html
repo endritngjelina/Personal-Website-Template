@@ -1,0 +1,1068 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Alex Rivera - Full Stack Developer</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <style>
+        :root {
+            --primary-bg: #0a0a0a;
+            --secondary-bg: #1a1a1a;
+            --accent-color: #00ff88;
+            --text-primary: #ffffff;
+            --text-secondary: #b0b0b0;
+            --card-bg: rgba(26, 26, 26, 0.8);
+            --border-color: rgba(255, 255, 255, 0.1);
+            --glow: rgba(0, 255, 136, 0.3);
+        }
+
+        [data-theme="light"] {
+            --primary-bg: #ffffff;
+            --secondary-bg: #f8f9fa;
+            --accent-color: #0066cc;
+            --text-primary: #1a1a1a;
+            --text-secondary: #666666;
+            --card-bg: rgba(248, 249, 250, 0.9);
+            --border-color: rgba(0, 0, 0, 0.1);
+            --glow: rgba(0, 102, 204, 0.3);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: var(--primary-bg);
+            color: var(--text-primary);
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            overflow-x: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .canvas-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+        }
+
+        .navbar {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            padding: 1rem 2rem;
+            background: rgba(10, 10, 10, 0.8);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--border-color);
+            z-index: 1000;
+            transition: all 0.3s ease;
+        }
+
+        [data-theme="light"] .navbar {
+            background: rgba(255, 255, 255, 0.8);
+        }
+
+        .navbar-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+            list-style: none;
+        }
+
+        .nav-links a {
+            color: var(--text-secondary);
+            text-decoration: none;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .nav-links a:hover,
+        .nav-links a:focus {
+            color: var(--accent-color);
+            outline: none;
+        }
+
+        .nav-links a:focus-visible {
+            outline: 2px solid var(--accent-color);
+            outline-offset: 4px;
+        }
+
+        .theme-toggle {
+            background: var(--secondary-bg);
+            border: 1px solid var(--border-color);
+            color: var(--text-primary);
+            padding: 0.5rem;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 1.2rem;
+        }
+
+        .theme-toggle:hover,
+        .theme-toggle:focus {
+            background: var(--accent-color);
+            transform: scale(1.1);
+            outline: none;
+        }
+
+        .theme-toggle:focus-visible {
+            outline: 2px solid var(--accent-color);
+            outline-offset: 4px;
+        }
+
+        .section {
+            min-height: 100vh;
+            padding: 6rem 2rem 2rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .container {
+            max-width: 1200px;
+            width: 100%;
+        }
+
+        .hero {
+            text-align: center;
+            animation: fadeInUp 1s ease-out;
+        }
+
+        .hero h1 {
+            font-size: clamp(3rem, 8vw, 6rem);
+            font-weight: 700;
+            margin-bottom: 1rem;
+            background: linear-gradient(135deg, var(--text-primary), var(--accent-color));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            animation: glow 2s ease-in-out infinite alternate;
+        }
+
+        .hero p {
+            font-size: 1.5rem;
+            color: var(--text-secondary);
+            margin-bottom: 2rem;
+        }
+
+        .cta-button {
+            display: inline-block;
+            padding: 1rem 2rem;
+            background: var(--accent-color);
+            color: var(--primary-bg);
+            text-decoration: none;
+            border-radius: 50px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            transform: translateY(0);
+        }
+
+        .cta-button:hover,
+        .cta-button:focus {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px var(--glow);
+            outline: none;
+        }
+
+        .cta-button:focus-visible {
+            outline: 2px solid var(--accent-color);
+            outline-offset: 4px;
+        }
+
+        .about-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 4rem;
+            align-items: center;
+        }
+
+        .about-text h2 {
+            font-size: 3rem;
+            margin-bottom: 2rem;
+            color: var(--accent-color);
+        }
+
+        .about-text p {
+            font-size: 1.2rem;
+            line-height: 1.6;
+            color: var(--text-secondary);
+            margin-bottom: 1.5rem;
+        }
+
+        .skills-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 1rem;
+            margin-top: 2rem;
+        }
+
+        .skill-card {
+            background: var(--card-bg);
+            padding: 1.5rem;
+            border-radius: 12px;
+            border: 1px solid var(--border-color);
+            text-align: center;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .skill-card:hover,
+        .skill-card:focus {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 30px var(--glow);
+            outline: none;
+        }
+
+        .skill-card:focus-visible {
+            outline: 2px solid var(--accent-color);
+            outline-offset: 4px;
+        }
+
+        .projects-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 2rem;
+            margin-top: 2rem;
+        }
+
+        .project-card {
+            background: var(--card-bg);
+            border-radius: 16px;
+            overflow: hidden;
+            border: 1px solid var(--border-color);
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .project-card:hover,
+        .project-card:focus {
+            transform: translateY(-10px);
+            box-shadow: 0 20px 40px var(--glow);
+            outline: none;
+        }
+
+        .project-card:focus-visible {
+            outline: 2px solid var(--accent-color);
+            outline-offset: 4px;
+        }
+
+        .project-image {
+            height: 200px;
+            background: linear-gradient(135deg, var(--accent-color), var(--secondary-bg));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 3rem;
+            color: var(--primary-bg);
+        }
+
+        .project-content {
+            padding: 1.5rem;
+        }
+
+        .project-content h3 {
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+            color: var(--accent-color);
+        }
+
+        .blog-posts {
+            display: grid;
+            gap: 2rem;
+            margin-top: 2rem;
+        }
+
+        .blog-post {
+            background: var(--card-bg);
+            padding: 2rem;
+            border-radius: 16px;
+            border: 1px solid var(--border-color);
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .blog-post:hover,
+        .blog-post:focus {
+            transform: translateX(10px);
+            box-shadow: 0 10px 30px var(--glow);
+            outline: none;
+        }
+
+        .blog-post:focus-visible {
+            outline: 2px solid var(--accent-color);
+            outline-offset: 4px;
+        }
+
+        .blog-date {
+            color: var(--accent-color);
+            font-size: 0.9rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .demo-container {
+            background: var(--card-bg);
+            border-radius: 16px;
+            padding: 2rem;
+            border: 1px solid var(--border-color);
+            margin-top: 2rem;
+        }
+
+        .code-editor {
+            background: var(--secondary-bg);
+            border-radius: 8px;
+            padding: 1rem;
+            font-family: 'Courier New', monospace;
+            border: 1px solid var(--border-color);
+            margin-bottom: 1rem;
+        }
+
+        .code-editor textarea {
+            width: 100%;
+            height: 150px;
+            background: transparent;
+            border: none;
+            color: var(--text-primary);
+            font-family: inherit;
+            resize: none;
+            outline: none;
+        }
+
+        .run-button {
+            background: var(--accent-color);
+            color: var(--primary-bg);
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .run-button:hover,
+        .run-button:focus {
+            transform: scale(1.05);
+            outline: none;
+        }
+
+        .run-button:focus-visible {
+            outline: 2px solid var(--accent-color);
+            outline-offset: 4px;
+        }
+
+        .output {
+            background: var(--secondary-bg);
+            border-radius: 8px;
+            padding: 1rem;
+            margin-top: 1rem;
+            border: 1px solid var(--border-color);
+            min-height: 100px;
+        }
+
+        .sound-toggle {
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            background: var(--accent-color);
+            color: var(--primary-bg);
+            border: none;
+            padding: 1rem;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 1.5rem;
+            transition: all 0.3s ease;
+            z-index: 1000;
+        }
+
+        .sound-toggle:hover,
+        .sound-toggle:focus {
+            transform: scale(1.1);
+            outline: none;
+        }
+
+        .sound-toggle:focus-visible {
+            outline: 2px solid var(--accent-color);
+            outline-offset: 4px;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(50px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes glow {
+            from {
+                text-shadow: 0 0 20px var(--glow);
+            }
+            to {
+                text-shadow: 0 0 30px var(--glow), 0 0 40px var(--glow);
+            }
+        }
+
+        @media (max-width: 768px) {
+            .about-grid {
+                grid-template-columns: 1fr;
+                text-align: center;
+            }
+            
+            .nav-links {
+                display: none;
+            }
+            
+            .section {
+                padding: 4rem 1rem 2rem;
+            }
+        }
+
+        .sr-only {
+            position: absolute;
+            width: 1px;
+            height: 1px;
+            padding: 0;
+            margin: -1px;
+            overflow: hidden;
+            clip: rect(0, 0, 0, 0);
+            white-space: nowrap;
+            border: 0;
+        }
+    </style>
+</head>
+<body data-theme="dark">
+    <div class="canvas-container" aria-hidden="true"></div>
+    
+    <nav class="navbar" role="navigation" aria-label="Main navigation">
+        <div class="navbar-content">
+            <div class="logo">
+                <h2>AR</h2>
+            </div>
+            <ul class="nav-links">
+                <li><a href="#home" aria-label="Go to home section">Home</a></li>
+                <li><a href="#about" aria-label="Go to about section">About</a></li>
+                <li><a href="#projects" aria-label="Go to projects section">Projects</a></li>
+                <li><a href="#blog" aria-label="Go to blog section">Blog</a></li>
+                <li><a href="#demo" aria-label="Go to demo section">Demo</a></li>
+            </ul>
+            <button class="theme-toggle" aria-label="Toggle theme" id="themeToggle">🌙</button>
+        </div>
+    </nav>
+
+    <main>
+        <section class="section" id="home">
+            <div class="container">
+                <div class="hero">
+                    <h1>Alex Rivera</h1>
+                    <p>Full Stack Developer & Creative Technologist</p>
+                    <a href="#about" class="cta-button" aria-label="Learn more about Alex">Explore My Work</a>
+                </div>
+            </div>
+        </section>
+
+        <section class="section" id="about">
+            <div class="container">
+                <div class="about-grid">
+                    <div class="about-text">
+                        <h2>About Me</h2>
+                        <p>I'm a passionate full-stack developer with 5+ years of experience creating immersive digital experiences. I specialize in modern web technologies and love bringing creative ideas to life through code.</p>
+                        <p>When I'm not coding, you'll find me exploring new frameworks, contributing to open source, or experimenting with 3D animations and interactive design.</p>
+                    </div>
+                    <div class="skills-grid">
+                        <div class="skill-card" tabindex="0">
+                            <h3>JavaScript</h3>
+                            <p>ES6+, TypeScript</p>
+                        </div>
+                        <div class="skill-card" tabindex="0">
+                            <h3>React</h3>
+                            <p>Hooks, Context, SSR</p>
+                        </div>
+                        <div class="skill-card" tabindex="0">
+                            <h3>Node.js</h3>
+                            <p>Express, API Design</p>
+                        </div>
+                        <div class="skill-card" tabindex="0">
+                            <h3>Three.js</h3>
+                            <p>3D Graphics, WebGL</p>
+                        </div>
+                        <div class="skill-card" tabindex="0">
+                            <h3>Python</h3>
+                            <p>Django, FastAPI</p>
+                        </div>
+                        <div class="skill-card" tabindex="0">
+                            <h3>Cloud</h3>
+                            <p>AWS, Docker, CI/CD</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="section" id="projects">
+            <div class="container">
+                <h2 style="text-align: center; font-size: 3rem; margin-bottom: 2rem; color: var(--accent-color);">Featured Projects</h2>
+                <div class="projects-grid">
+                    <article class="project-card" tabindex="0">
+                        <div class="project-image">🌐</div>
+                        <div class="project-content">
+                            <h3>EcoTracker</h3>
+                            <p>A full-stack web application for tracking personal carbon footprint with real-time analytics and gamification features.</p>
+                            <p><strong>Tech:</strong> React, Node.js, MongoDB, Chart.js</p>
+                        </div>
+                    </article>
+                    <article class="project-card" tabindex="0">
+                        <div class="project-image">🎮</div>
+                        <div class="project-content">
+                            <h3>3D Portfolio Game</h3>
+                            <p>An interactive 3D portfolio experience built with Three.js, featuring physics-based interactions and immersive storytelling.</p>
+                            <p><strong>Tech:</strong> Three.js, GSAP, WebGL Shaders</p>
+                        </div>
+                    </article>
+                    <article class="project-card" tabindex="0">
+                        <div class="project-image">📱</div>
+                        <div class="project-content">
+                            <h3>TaskFlow API</h3>
+                            <p>A RESTful API for project management with real-time collaboration, file sharing, and advanced authentication.</p>
+                            <p><strong>Tech:</strong> Python, FastAPI, PostgreSQL, Redis</p>
+                        </div>
+                    </article>
+                </div>
+            </div>
+        </section>
+
+        <section class="section" id="blog">
+            <div class="container">
+                <h2 style="text-align: center; font-size: 3rem; margin-bottom: 2rem; color: var(--accent-color);">Latest Blog Posts</h2>
+                <div class="blog-posts">
+                    <article class="blog-post" tabindex="0">
+                        <div class="blog-date">March 15, 2024</div>
+                        <h3>Building Accessible Web Applications: A Developer's Guide</h3>
+                        <p>Exploring the essential principles of web accessibility and how to implement them in modern web applications. Learn about ARIA labels, keyboard navigation, and inclusive design patterns.</p>
+                    </article>
+                    <article class="blog-post" tabindex="0">
+                        <div class="blog-date">February 28, 2024</div>
+                        <h3>The Future of 3D on the Web: WebGL and Beyond</h3>
+                        <p>A deep dive into the current state of 3D graphics on the web, covering Three.js, WebGL, and emerging technologies like WebGPU.</p>
+                    </article>
+                    <article class="blog-post" tabindex="0">
+                        <div class="blog-date">February 10, 2024</div>
+                        <h3>Optimizing React Performance with Modern Techniques</h3>
+                        <p>Advanced techniques for optimizing React applications, including code splitting, memoization, and the latest performance patterns.</p>
+                    </article>
+                </div>
+            </div>
+        </section>
+
+        <section class="section" id="demo">
+            <div class="container">
+                <h2 style="text-align: center; font-size: 3rem; margin-bottom: 2rem; color: var(--accent-color);">Interactive Demo</h2>
+                <div class="demo-container">
+                    <h3>Mini Code Editor</h3>
+                    <p>Try out this interactive JavaScript code editor. Write some code and see the results!</p>
+                    <div class="code-editor">
+                        <textarea id="codeInput" placeholder="// Write your JavaScript code here
+console.log('Hello, World!');
+const greeting = 'Welcome to my portfolio!';
+return greeting;"></textarea>
+                    </div>
+                    <button class="run-button" id="runCode" aria-label="Run the code">Run Code</button>
+                    <div class="output" id="output" aria-live="polite">
+                        <em>Output will appear here...</em>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <button class="sound-toggle" id="soundToggle" aria-label="Toggle sound effects">🔊</button>
+
+    <script>
+        // Theme Management
+        class ThemeManager {
+            constructor() {
+                this.currentTheme = localStorage.getItem('theme') || 'dark';
+                this.toggleButton = document.getElementById('themeToggle');
+                this.init();
+            }
+
+            init() {
+                this.applyTheme();
+                this.toggleButton.addEventListener('click', () => this.toggleTheme());
+                this.toggleButton.addEventListener('keydown', (e) => {
+                    if (e.key === 'Enter' || e.key === ' ') {
+                        e.preventDefault();
+                        this.toggleTheme();
+                    }
+                });
+            }
+
+            toggleTheme() {
+                this.currentTheme = this.currentTheme === 'dark' ? 'light' : 'dark';
+                this.applyTheme();
+                localStorage.setItem('theme', this.currentTheme);
+                this.playSound();
+            }
+
+            applyTheme() {
+                document.body.setAttribute('data-theme', this.currentTheme);
+                this.toggleButton.textContent = this.currentTheme === 'dark' ? '☀️' : '🌙';
+            }
+
+            playSound() {
+                if (window.soundManager && window.soundManager.enabled) {
+                    window.soundManager.playClick();
+                }
+            }
+        }
+
+        // Sound Manager
+        class SoundManager {
+            constructor() {
+                this.enabled = localStorage.getItem('sound') !== 'false';
+                this.audioContext = null;
+                this.toggleButton = document.getElementById('soundToggle');
+                this.init();
+            }
+
+            init() {
+                this.toggleButton.addEventListener('click', () => this.toggleSound());
+                this.updateButton();
+            }
+
+            toggleSound() {
+                this.enabled = !this.enabled;
+                localStorage.setItem('sound', this.enabled);
+                this.updateButton();
+                if (this.enabled) this.playClick();
+            }
+
+            updateButton() {
+                this.toggleButton.textContent = this.enabled ? '🔊' : '🔇';
+            }
+
+            initAudioContext() {
+                if (!this.audioContext) {
+                    this.audioContext = new (window.AudioContext || window.webkitAudioContext)();
+                }
+            }
+
+            playClick() {
+                if (!this.enabled) return;
+                this.initAudioContext();
+                
+                const oscillator = this.audioContext.createOscillator();
+                const gainNode = this.audioContext.createGain();
+                
+                oscillator.connect(gainNode);
+                gainNode.connect(this.audioContext.destination);
+                
+                oscillator.frequency.setValueAtTime(800, this.audioContext.currentTime);
+                oscillator.frequency.exponentialRampToValueAtTime(400, this.audioContext.currentTime + 0.1);
+                
+                gainNode.gain.setValueAtTime(0.1, this.audioContext.currentTime);
+                gainNode.gain.exponentialRampToValueAtTime(0.01, this.audioContext.currentTime + 0.1);
+                
+                oscillator.start();
+                oscillator.stop(this.audioContext.currentTime + 0.1);
+            }
+
+            playHover() {
+                if (!this.enabled) return;
+                this.initAudioContext();
+                
+                const oscillator = this.audioContext.createOscillator();
+                const gainNode = this.audioContext.createGain();
+                
+                oscillator.connect(gainNode);
+                gainNode.connect(this.audioContext.destination);
+                
+                oscillator.frequency.setValueAtTime(600, this.audioContext.currentTime);
+                gainNode.gain.setValueAtTime(0.05, this.audioContext.currentTime);
+                gainNode.gain.exponentialRampToValueAtTime(0.01, this.audioContext.currentTime + 0.05);
+                
+                oscillator.start();
+                oscillator.stop(this.audioContext.currentTime + 0.05);
+            }
+        }
+
+        // 3D Background Animation
+        class ThreeBackground {
+            constructor() {
+                this.container = document.querySelector('.canvas-container');
+                this.scene = null;
+                this.camera = null;
+                this.renderer = null;
+                this.particles = [];
+                this.mouse = { x: 0, y: 0 };
+                this.init();
+            }
+
+            init() {
+                this.createScene();
+                this.createParticles();
+                this.setupEventListeners();
+                this.animate();
+            }
+
+            createScene() {
+                this.scene = new THREE.Scene();
+                this.camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+                this.renderer = new THREE.WebGLRenderer({ alpha: true });
+                this.renderer.setSize(window.innerWidth, window.innerHeight);
+                this.container.appendChild(this.renderer.domElement);
+                this.camera.position.z = 50;
+            }
+
+            createParticles() {
+                const geometry = new THREE.BufferGeometry();
+                const positions = [];
+                const colors = [];
+
+                for (let i = 0; i < 1000; i++) {
+                    positions.push(
+                        (Math.random() - 0.5) * 200,
+                        (Math.random() - 0.5) * 200,
+                        (Math.random() - 0.5) * 200
+                    );
+                    
+                    colors.push(
+                        Math.random(),
+                        Math.random() * 0.5 + 0.5,
+                        1
+                    );
+                }
+
+                geometry.setAttribute('position', new THREE.Float32BufferAttribute(positions, 3));
+                geometry.setAttribute('color', new THREE.Float32BufferAttribute(colors, 3));
+
+                const material = new THREE.PointsMaterial({
+                    size: 2,
+                    vertexColors: true,
+                    transparent: true,
+                    opacity: 0.8
+                });
+
+                this.particles = new THREE.Points(geometry, material);
+                this.scene.add(this.particles);
+            }
+
+            setupEventListeners() {
+                window.addEventListener('resize', () => this.onWindowResize());
+                document.addEventListener('mousemove', (e) => this.onMouseMove(e));
+            }
+
+            onWindowResize() {
+                this.camera.aspect = window.innerWidth / window.innerHeight;
+                this.camera.updateProjectionMatrix();
+                this.renderer.setSize(window.innerWidth, window.innerHeight);
+            }
+
+            onMouseMove(event) {
+                this.mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
+                this.mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
+            }
+
+            animate() {
+                requestAnimationFrame(() => this.animate());
+                
+                this.particles.rotation.x += 0.001;
+                this.particles.rotation.y += 0.002;
+                
+                this.particles.rotation.x += this.mouse.y * 0.01;
+                this.particles.rotation.y += this.mouse.x * 0.01;
+                
+                this.renderer.render(this.scene, this.camera);
+            }
+        }
+
+        // Code Editor Demo
+        class CodeEditor {
+            constructor() {
+                this.codeInput = document.getElementById('codeInput');
+                this.runButton = document.getElementById('runCode');
+                this.output = document.getElementById('output');
+                this.init();
+            }
+
+            init() {
+                this.runButton.addEventListener('click', () => this.runCode());
+                this.runButton.addEventListener('keydown', (e) => {
+                    if (e.key === 'Enter' || e.key === ' ') {
+                        e.preventDefault();
+                        this.runCode();
+                    }
+                });
+            }
+
+            runCode() {
+                const code = this.codeInput.value;
+                this.output.innerHTML = '';
+                
+                try {
+                    // Create a safe execution context
+                    const originalConsole = console.log;
+                    const logs = [];
+                    
+                    console.log = (...args) => {
+                        logs.push(args.join(' '));
+                    };
+                    
+                    // Execute the code
+                    const result = new Function(code)();
+                    
+                    // Restore console
+                    console.log = originalConsole;
+                    
+                    // Display results
+                    if (logs.length > 0) {
+                        this.output.innerHTML += `<div><strong>Console:</strong></div>`;
+                        logs.forEach(log => {
+                            this.output.innerHTML += `<div>${this.escapeHtml(log)}</div>`;
+                        });
+                    }
+                    
+                    if (result !== undefined) {
+                        this.output.innerHTML += `<div><strong>Return:</strong> ${this.escapeHtml(String(result))}</div>`;
+                    }
+                    
+                    if (logs.length === 0 && result === undefined) {
+                        this.output.innerHTML = '<div>Code executed successfully (no output)</div>';
+                    }
+                    
+                } catch (error) {
+                    this.output.innerHTML = `<div style="color: #ff6b6b;"><strong>Error:</strong> ${this.escapeHtml(error.message)}</div>`;
+                }
+                
+                if (window.soundManager) {
+                    window.soundManager.playClick();
+                }
+            }
+
+            escapeHtml(text) {
+                const div = document.createElement('div');
+                div.textContent = text;
+                return div.innerHTML;
+            }
+        }
+
+        // Smooth scrolling for navigation
+        class SmoothScroll {
+            constructor() {
+                this.init();
+            }
+
+            init() {
+                document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+                    anchor.addEventListener('click', (e) => {
+                        e.preventDefault();
+                        const target = document.querySelector(anchor.getAttribute('href'));
+                        if (target) {
+                            target.scrollIntoView({
+                                behavior: 'smooth',
+                                block: 'start'
+                            });
+                        }
+                    });
+                });
+            }
+        }
+
+        // Interactive elements with sound feedback
+        class InteractiveElements {
+            constructor() {
+                this.init();
+            }
+
+            init() {
+                // Add hover effects and sound to interactive elements
+                const interactiveElements = document.querySelectorAll(
+                    '.skill-card, .project-card, .blog-post, .cta-button, .nav-links a'
+                );
+
+                interactiveElements.forEach(element => {
+                    element.addEventListener('mouseenter', () => {
+                        if (window.soundManager) {
+                            window.soundManager.playHover();
+                        }
+                    });
+
+                    element.addEventListener('click', () => {
+                        if (window.soundManager) {
+                            window.soundManager.playClick();
+                        }
+                    });
+                });
+
+                // Keyboard navigation enhancements
+                document.addEventListener('keydown', (e) => {
+                    if (e.key === 'Tab') {
+                        document.body.classList.add('keyboard-navigation');
+                    }
+                });
+
+                document.addEventListener('mousedown', () => {
+                    document.body.classList.remove('keyboard-navigation');
+                });
+            }
+        }
+
+        // Intersection Observer for animations
+        class ScrollAnimations {
+            constructor() {
+                this.observer = null;
+                this.init();
+            }
+
+            init() {
+                const options = {
+                    threshold: 0.1,
+                    rootMargin: '0px 0px -100px 0px'
+                };
+
+                this.observer = new IntersectionObserver((entries) => {
+                    entries.forEach(entry => {
+                        if (entry.isIntersecting) {
+                            entry.target.style.opacity = '1';
+                            entry.target.style.transform = 'translateY(0)';
+                        }
+                    });
+                }, options);
+
+                // Observe elements for scroll animations
+                const animatedElements = document.querySelectorAll(
+                    '.skill-card, .project-card, .blog-post'
+                );
+
+                animatedElements.forEach(element => {
+                    element.style.opacity = '0';
+                    element.style.transform = 'translateY(30px)';
+                    element.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
+                    this.observer.observe(element);
+                });
+            }
+        }
+
+        // Initialize all components when DOM is loaded
+        document.addEventListener('DOMContentLoaded', () => {
+            // Initialize managers and components
+            window.soundManager = new SoundManager();
+            const themeManager = new ThemeManager();
+            const threeBackground = new ThreeBackground();
+            const codeEditor = new CodeEditor();
+            const smoothScroll = new SmoothScroll();
+            const interactiveElements = new InteractiveElements();
+            const scrollAnimations = new ScrollAnimations();
+
+            // Add loading animation
+            document.body.style.opacity = '0';
+            setTimeout(() => {
+                document.body.style.transition = 'opacity 1s ease';
+                document.body.style.opacity = '1';
+            }, 100);
+
+            // Update particles based on theme
+            const updateParticlesForTheme = () => {
+                const theme = document.body.getAttribute('data-theme');
+                if (threeBackground.particles) {
+                    const material = threeBackground.particles.material;
+                    if (theme === 'light') {
+                        material.opacity = 0.3;
+                    } else {
+                        material.opacity = 0.8;
+                    }
+                }
+            };
+
+            // Listen for theme changes
+            const observer = new MutationObserver((mutations) => {
+                mutations.forEach((mutation) => {
+                    if (mutation.attributeName === 'data-theme') {
+                        updateParticlesForTheme();
+                    }
+                });
+            });
+
+            observer.observe(document.body, {
+                attributes: true,
+                attributeFilter: ['data-theme']
+            });
+
+            // Performance optimization: Reduce particles on mobile
+            if (window.innerWidth < 768) {
+                const positions = threeBackground.particles.geometry.attributes.position.array;
+                const reducedPositions = new Float32Array(positions.length / 2);
+                for (let i = 0; i < reducedPositions.length; i++) {
+                    reducedPositions[i] = positions[i * 2];
+                }
+                threeBackground.particles.geometry.setAttribute('position', 
+                    new THREE.BufferAttribute(reducedPositions, 3));
+            }
+
+            // Add easter egg: Konami code
+            let konamiCode = [];
+            const konami = [38, 38, 40, 40, 37, 39, 37, 39, 66, 65]; // ↑↑↓↓←→←→BA
+
+            document.addEventListener('keydown', (e) => {
+                konamiCode.push(e.keyCode);
+                if (konamiCode.length > konami.length) {
+                    konamiCode.shift();
+                }
+                
+                if (konamiCode.length === konami.length && 
+                    konamiCode.every((code, index) => code === konami[index])) {
+                    // Easter egg activated!
+                    document.body.style.animation = 'rainbow 2s infinite';
+                    setTimeout(() => {
+                        document.body.style.animation = '';
+                    }, 5000);
+                    
+                    if (window.soundManager && window.soundManager.enabled) {
+                        // Play special sound sequence
+                        [200, 300, 400, 500, 600].forEach((freq, index) => {
+                            setTimeout(() => {
+                                const oscillator = window.soundManager.audioContext.createOscillator();
+                                const gainNode = window.soundManager.audioContext.createGain();
+                                oscillator.connect(gainNode);
+                                gainNode.connect(window.soundManager.audioContext.destination);
+                                oscillator.frequency.setValueAtTime(freq, window.soundManager.audioContext.currentTime);
+                                gainNode.gain.setValueAtTime(0.1, window.soundManager.audioContext.currentTime);
+                                gainNode.gain.exponentialRampToValueAtTime(0.01, window.soundManager.audioContext.currentTime + 0.2);
+                                oscillator.start();
+                                oscillator.stop(window.soundManager.audioContext.currentTime + 0.2);
+                            }, index * 100);
+                        });
+                    }
+                }
+            });
+        });
+
+        // Add rainbow animation for easter egg
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes rainbow {
+                0% { filter: hue-rotate(0deg); }
+                100% { filter: hue-rotate(360deg); }
+            }
+            
+            .keyboard-navigation *:focus {
+                outline: 2px solid var(--accent-color) !important;
+                outline-offset: 4px !important;
+            }
+        `;
+        document.head.appendChild(style);
+    </script>
+</body>
+</html>
