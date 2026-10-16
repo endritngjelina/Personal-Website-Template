@@ -1,0 +1,1216 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Alex Chen - Developer Portfolio</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <style>
+        :root {
+            --bg-primary: #0a0a0f;
+            --bg-secondary: #1a1a2e;
+            --text-primary: #e0e0ff;
+            --text-secondary: #b0b0d0;
+            --accent: #4a90ff;
+            --accent-glow: #6b73ff;
+            --lightning: #00d4ff;
+            --card-bg: rgba(26, 26, 46, 0.8);
+            --border: rgba(74, 144, 255, 0.3);
+        }
+
+        [data-theme="light"] {
+            --bg-primary: #fef7ff;
+            --bg-secondary: #fff0f8;
+            --text-primary: #2d1b42;
+            --text-secondary: #6b4c7a;
+            --accent: #e91e63;
+            --accent-glow: #ff69b4;
+            --lightning: #ff1493;
+            --card-bg: rgba(255, 255, 255, 0.9);
+            --border: rgba(233, 30, 99, 0.3);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            overflow-x: hidden;
+            transition: all 0.5s ease;
+        }
+
+        #three-canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            opacity: 0.6;
+        }
+
+        .lightning {
+            position: absolute;
+            width: 2px;
+            background: linear-gradient(to bottom, transparent, var(--lightning), transparent);
+            animation: lightning 3s infinite;
+            z-index: 0;
+        }
+
+        @keyframes lightning {
+            0%, 100% { opacity: 0; transform: translateY(-100vh) scaleY(0); }
+            50% { opacity: 1; transform: translateY(100vh) scaleY(1); }
+        }
+
+        .nav {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            padding: 1rem 2rem;
+            background: rgba(26, 26, 46, 0.95);
+            backdrop-filter: blur(10px);
+            z-index: 1000;
+            border-bottom: 1px solid var(--border);
+            transition: all 0.3s ease;
+        }
+
+        [data-theme="light"] .nav {
+            background: rgba(255, 255, 255, 0.95);
+        }
+
+        .nav-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .logo {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: var(--accent);
+            text-decoration: none;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .logo::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: -100%;
+            width: 100%;
+            height: 2px;
+            background: var(--accent-glow);
+            animation: dash 2s infinite;
+        }
+
+        @keyframes dash {
+            0% { left: -100%; }
+            100% { left: 100%; }
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+            list-style: none;
+        }
+
+        .nav-links a {
+            color: var(--text-secondary);
+            text-decoration: none;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .nav-links a:hover {
+            color: var(--accent);
+            transform: translateY(-2px);
+        }
+
+        .theme-toggle {
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: 25px;
+            padding: 0.5rem 1rem;
+            color: var(--text-primary);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .theme-toggle:hover {
+            transform: scale(1.05);
+            box-shadow: 0 0 20px var(--accent-glow);
+        }
+
+        .hero {
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            position: relative;
+            padding: 2rem;
+        }
+
+        .hero-content {
+            max-width: 800px;
+            z-index: 1;
+        }
+
+        .hero h1 {
+            font-size: 4rem;
+            margin-bottom: 1rem;
+            background: linear-gradient(45deg, var(--accent), var(--accent-glow));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            animation: glow 3s ease-in-out infinite alternate;
+        }
+
+        @keyframes glow {
+            from { filter: drop-shadow(0 0 20px var(--accent)); }
+            to { filter: drop-shadow(0 0 40px var(--accent-glow)); }
+        }
+
+        .hero p {
+            font-size: 1.5rem;
+            color: var(--text-secondary);
+            margin-bottom: 2rem;
+            animation: fadeInUp 1s ease-out 0.5s both;
+        }
+
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .cta-button {
+            display: inline-block;
+            padding: 1rem 2rem;
+            background: linear-gradient(45deg, var(--accent), var(--accent-glow));
+            color: white;
+            text-decoration: none;
+            border-radius: 30px;
+            font-weight: bold;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .cta-button::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+            transition: left 0.5s;
+        }
+
+        .cta-button:hover::before {
+            left: 100%;
+        }
+
+        .cta-button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 30px rgba(74, 144, 255, 0.4);
+        }
+
+        .section {
+            padding: 5rem 2rem;
+            max-width: 1200px;
+            margin: 0 auto;
+            position: relative;
+            z-index: 1;
+        }
+
+        .section h2 {
+            font-size: 3rem;
+            text-align: center;
+            margin-bottom: 3rem;
+            color: var(--accent);
+            position: relative;
+        }
+
+        .section h2::after {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 100px;
+            height: 3px;
+            background: linear-gradient(45deg, var(--accent), var(--accent-glow));
+            border-radius: 2px;
+        }
+
+        .skills-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin-top: 3rem;
+        }
+
+        .skill-card {
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: 15px;
+            padding: 2rem;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .skill-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(45deg, transparent, rgba(74, 144, 255, 0.1), transparent);
+            transform: translateX(-100%);
+            transition: transform 0.5s;
+        }
+
+        .skill-card:hover::before {
+            transform: translateX(100%);
+        }
+
+        .skill-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 20px 40px rgba(74, 144, 255, 0.2);
+        }
+
+        .skill-card h3 {
+            color: var(--accent);
+            margin-bottom: 1rem;
+            font-size: 1.5rem;
+        }
+
+        .skill-bar {
+            width: 100%;
+            height: 8px;
+            background: rgba(74, 144, 255, 0.2);
+            border-radius: 4px;
+            margin-top: 1rem;
+            overflow: hidden;
+        }
+
+        .skill-progress {
+            height: 100%;
+            background: linear-gradient(45deg, var(--accent), var(--accent-glow));
+            border-radius: 4px;
+            transition: width 2s ease;
+            position: relative;
+        }
+
+        .skill-progress::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+            animation: shimmer 2s infinite;
+        }
+
+        @keyframes shimmer {
+            0% { transform: translateX(-100%); }
+            100% { transform: translateX(100%); }
+        }
+
+        .projects-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 2rem;
+            margin-top: 3rem;
+        }
+
+        .project-card {
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: 15px;
+            overflow: hidden;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .project-card:hover {
+            transform: scale(1.05);
+            box-shadow: 0 20px 40px rgba(74, 144, 255, 0.3);
+        }
+
+        .project-image {
+            width: 100%;
+            height: 200px;
+            background: linear-gradient(135deg, var(--accent), var(--accent-glow));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 3rem;
+            color: white;
+        }
+
+        .project-content {
+            padding: 2rem;
+        }
+
+        .project-title {
+            font-size: 1.5rem;
+            color: var(--accent);
+            margin-bottom: 1rem;
+        }
+
+        .project-description {
+            color: var(--text-secondary);
+            margin-bottom: 1.5rem;
+            line-height: 1.6;
+        }
+
+        .project-tech {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .tech-tag {
+            background: rgba(74, 144, 255, 0.2);
+            color: var(--accent);
+            padding: 0.3rem 0.8rem;
+            border-radius: 15px;
+            font-size: 0.9rem;
+            border: 1px solid var(--border);
+        }
+
+        .project-links {
+            display: flex;
+            gap: 1rem;
+        }
+
+        .project-link {
+            padding: 0.5rem 1rem;
+            background: var(--accent);
+            color: white;
+            text-decoration: none;
+            border-radius: 20px;
+            transition: all 0.3s ease;
+            font-size: 0.9rem;
+        }
+
+        .project-link:hover {
+            background: var(--accent-glow);
+            transform: translateY(-2px);
+        }
+
+        .blog-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin-top: 3rem;
+        }
+
+        .blog-card {
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: 15px;
+            padding: 2rem;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .blog-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 30px rgba(74, 144, 255, 0.2);
+        }
+
+        .blog-date {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .blog-title {
+            font-size: 1.3rem;
+            color: var(--accent);
+            margin-bottom: 1rem;
+        }
+
+        .blog-excerpt {
+            color: var(--text-secondary);
+            line-height: 1.6;
+        }
+
+        .demo-section {
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: 15px;
+            padding: 2rem;
+            margin-top: 3rem;
+        }
+
+        .code-editor {
+            background: #1a1a2e;
+            border-radius: 10px;
+            overflow: hidden;
+            border: 1px solid var(--border);
+        }
+
+        .editor-header {
+            background: #2d2d4a;
+            padding: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .editor-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+        }
+
+        .dot-red { background: #ff5f56; }
+        .dot-yellow { background: #ffbd2e; }
+        .dot-green { background: #27ca3f; }
+
+        .editor-content {
+            padding: 1.5rem;
+            min-height: 200px;
+        }
+
+        .code-input {
+            width: 100%;
+            background: transparent;
+            border: none;
+            color: var(--text-primary);
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+            line-height: 1.5;
+            resize: vertical;
+            outline: none;
+        }
+
+        .code-output {
+            background: #0a0a0f;
+            padding: 1rem;
+            border-top: 1px solid var(--border);
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+            color: #00ff00;
+            min-height: 100px;
+        }
+
+        .run-button {
+            background: var(--accent);
+            color: white;
+            border: none;
+            padding: 0.8rem 1.5rem;
+            border-radius: 20px;
+            cursor: pointer;
+            font-weight: bold;
+            margin-top: 1rem;
+            transition: all 0.3s ease;
+        }
+
+        .run-button:hover {
+            background: var(--accent-glow);
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(74, 144, 255, 0.4);
+        }
+
+        .footer {
+            background: var(--bg-secondary);
+            padding: 3rem 2rem;
+            text-align: center;
+            border-top: 1px solid var(--border);
+        }
+
+        .contact-links {
+            display: flex;
+            justify-content: center;
+            gap: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .contact-link {
+            color: var(--text-secondary);
+            text-decoration: none;
+            transition: all 0.3s ease;
+            font-size: 1.1rem;
+        }
+
+        .contact-link:hover {
+            color: var(--accent);
+            transform: translateY(-2px);
+        }
+
+        @media (max-width: 768px) {
+            .hero h1 { font-size: 2.5rem; }
+            .hero p { font-size: 1.2rem; }
+            .section { padding: 3rem 1rem; }
+            .nav-links { display: none; }
+            .skills-grid,
+            .projects-grid,
+            .blog-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .floating-particles {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .particle {
+            position: absolute;
+            width: 4px;
+            height: 4px;
+            background: var(--accent);
+            border-radius: 50%;
+            opacity: 0.7;
+            animation: float 6s infinite linear;
+        }
+
+        @keyframes float {
+            0% {
+                transform: translateY(100vh) rotate(0deg);
+                opacity: 0;
+            }
+            10% {
+                opacity: 0.7;
+            }
+            90% {
+                opacity: 0.7;
+            }
+            100% {
+                transform: translateY(-100vh) rotate(360deg);
+                opacity: 0;
+            }
+        }
+    </style>
+</head>
+<body data-theme="dark">
+    <canvas id="three-canvas"></canvas>
+    
+    <div class="floating-particles" id="particles"></div>
+
+    <nav class="nav" role="navigation" aria-label="Main navigation">
+        <div class="nav-content">
+            <a href="#" class="logo" aria-label="Alex Chen Portfolio">AC</a>
+            <ul class="nav-links">
+                <li><a href="#about" aria-label="About section">About</a></li>
+                <li><a href="#skills" aria-label="Skills section">Skills</a></li>
+                <li><a href="#projects" aria-label="Projects section">Projects</a></li>
+                <li><a href="#blog" aria-label="Blog section">Blog</a></li>
+                <li><a href="#contact" aria-label="Contact section">Contact</a></li>
+            </ul>
+            <button class="theme-toggle" aria-label="Toggle theme" id="themeToggle">
+                <span id="themeIcon">🌙</span>
+                <span id="themeText">Dark</span>
+            </button>
+        </div>
+    </nav>
+
+    <main>
+        <section class="hero" id="hero">
+            <div class="hero-content">
+                <h1>Alex Chen</h1>
+                <p>Full-Stack Developer & Creative Technologist</p>
+                <a href="#projects" class="cta-button">View My Work</a>
+            </div>
+        </section>
+
+        <section class="section" id="about">
+            <h2>About Me</h2>
+            <p style="text-align: center; font-size: 1.2rem; color: var(--text-secondary); max-width: 800px; margin: 0 auto; line-height: 1.8;">
+                I'm a passionate developer who loves creating immersive digital experiences. With expertise in modern web technologies and a keen eye for design, I bring ideas to life through code. When I'm not coding, you'll find me exploring new technologies, contributing to open source, or experimenting with creative coding projects.
+            </p>
+        </section>
+
+        <section class="section" id="skills">
+            <h2>Skills & Expertise</h2>
+            <div class="skills-grid">
+                <div class="skill-card">
+                    <h3>Frontend Development</h3>
+                    <p>Creating responsive, interactive user interfaces with modern frameworks and libraries.</p>
+                    <div class="skill-bar">
+                        <div class="skill-progress" style="width: 95%"></div>
+                    </div>
+                </div>
+                <div class="skill-card">
+                    <h3>Backend Development</h3>
+                    <p>Building scalable server-side applications and APIs with various technologies.</p>
+                    <div class="skill-bar">
+                        <div class="skill-progress" style="width: 88%"></div>
+                    </div>
+                </div>
+                <div class="skill-card">
+                    <h3>3D Graphics & Animation</h3>
+                    <p>Creating immersive 3D experiences and interactive animations for the web.</p>
+                    <div class="skill-bar">
+                        <div class="skill-progress" style="width: 82%"></div>
+                    </div>
+                </div>
+                <div class="skill-card">
+                    <h3>DevOps & Cloud</h3>
+                    <p>Deploying and managing applications in cloud environments with CI/CD pipelines.</p>
+                    <div class="skill-bar">
+                        <div class="skill-progress" style="width: 78%"></div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="section" id="projects">
+            <h2>Featured Projects</h2>
+            <div class="projects-grid">
+                <div class="project-card">
+                    <div class="project-image">🚀</div>
+                    <div class="project-content">
+                        <h3 class="project-title">Cosmic Explorer</h3>
+                        <p class="project-description">An interactive 3D space exploration app built with Three.js and WebGL. Features realistic physics, procedural generation, and immersive sound design.</p>
+                        <div class="project-tech">
+                            <span class="tech-tag">Three.js</span>
+                            <span class="tech-tag">WebGL</span>
+                            <span class="tech-tag">TypeScript</span>
+                            <span class="tech-tag">Web Audio API</span>
+                        </div>
+                        <div class="project-links">
+                            <a href="#" class="project-link">Live Demo</a>
+                            <a href="#" class="project-link">GitHub</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="project-card">
+                    <div class="project-image">🎨</div>
+                    <div class="project-content">
+                        <h3 class="project-title">Creative Canvas</h3>
+                        <p class="project-description">A collaborative digital art platform with real-time synchronization, advanced brush engines, and AI-powered art generation tools.</p>
+                        <div class="project-tech">
+                            <span class="tech-tag">React</span>
+                            <span class="tech-tag">WebSocket</span>
+                            <span class="tech-tag">Canvas API</span>
+                            <span class="tech-tag">Node.js</span>
+                        </div>
+                        <div class="project-links">
+                            <a href="#" class="project-link">Live Demo</a>
+                            <a href="#" class="project-link">GitHub</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="project-card">
+                    <div class="project-image">⚡</div>
+                    <div class="project-content">
+                        <h3 class="project-title">Lightning Fast API</h3>
+                        <p class="project-description">A high-performance REST API built with modern architecture patterns, featuring caching, rate limiting, and comprehensive documentation.</p>
+                        <div class="project-tech">
+                            <span class="tech-tag">FastAPI</span>
+                            <span class="tech-tag">PostgreSQL</span>
+                            <span class="tech-tag">Redis</span>
+                            <span class="tech-tag">Docker</span>
+                        </div>
+                        <div class="project-links">
+                            <a href="#" class="project-link">Live Demo</a>
+                            <a href="#" class="project-link">GitHub</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="section" id="blog">
+            <h2>Latest Blog Posts</h2>
+            <div class="blog-grid">
+                <article class="blog-card">
+                    <div class="blog-date">June 15, 2025</div>
+                    <h3 class="blog-title">The Future of Web Development: WebAssembly and Beyond</h3>
+                    <p class="blog-excerpt">Exploring how WebAssembly is revolutionizing web performance and what it means for the future of web applications...</p>
+                </article>
+                <article class="blog-card">
+                    <div class="blog-date">June 10, 2025</div>
+                    <h3 class="blog-title">Creating Immersive 3D Experiences with Three.js</h3>
+                    <p class="blog-excerpt">A comprehensive guide to building stunning 3D web experiences, from basic scenes to advanced lighting and animation techniques...</p>
+                </article>
+                <article class="blog-card">
+                    <div class="blog-date">June 5, 2025</div>
+                    <h3 class="blog-title">Optimizing React Applications for Performance</h3>
+                    <p class="blog-excerpt">Learn the latest techniques for optimizing React applications, including code splitting, memoization, and bundle optimization...</p>
+                </article>
+            </div>
+        </section>
+
+        <section class="section" id="demo">
+            <h2>Interactive Demo</h2>
+            <div class="demo-section">
+                <h3 style="margin-bottom: 1rem; color: var(--accent);">Mini Code Editor</h3>
+                <p style="margin-bottom: 2rem; color: var(--text-secondary);">Try out this interactive code editor! Write some JavaScript and see it in action.</p>
+                
+                <div class="code-editor">
+                    <div class="editor-header">
+                        <div class="editor-dot dot-red"></div>
+                        <div class="editor-dot dot-yellow"></div>
+                        <div class="editor-dot dot-green"></div>
+                        <span style="margin-left: 1rem; color: var(--text-secondary); font-size: 0.9rem;">main.js</span>
+                    </div>
+                    <div class="editor-content">
+                        <textarea class="code-input" placeholder="// Write your JavaScript code here...
+console.log('Hello, World!');
+
+// Try some math
+const result = 2 + 2;
+console.log('2 + 2 =', result);
+
+// Create a simple function
+function greet(name) {
+    return `Hello, ${name}!`;
+}
+
+console.log(greet('Developer'));" rows="10"></textarea>
+                    </div>
+                    <div class="code-output" id="codeOutput">
+                        <div style="color: var(--text-secondary); margin-bottom: 0.5rem;">Output:</div>
+                        <div>Click "Run Code" to see your output here...</div>
+                    </div>
+                </div>
+                <button class="run-button" onclick="runCode()">⚡ Run Code</button>
+            </div>
+        </section>
+    </main>
+
+    <footer class="footer" id="contact">
+        <div class="contact-links">
+            <a href="#" class="contact-link" aria-label="Email">📧 Email</a>
+            <a href="#" class="contact-link" aria-label="GitHub">💻 GitHub</a>
+            <a href="#" class="contact-link" aria-label="LinkedIn">💼 LinkedIn</a>
+            <a href="#" class="contact-link" aria-label="Twitter">🐦 Twitter</a>
+        </div>
+        <p style="color: var(--text-secondary);">© 2025 Alex Chen. Built with passion and lots of coffee ☕</p>
+    </footer>
+
+    <script>
+        // Theme Toggle
+        const themeToggle = document.getElementById('themeToggle');
+        const themeIcon = document.getElementById('themeIcon');
+        const themeText = document.getElementById('themeText');
+        const body = document.body;
+
+        themeToggle.addEventListener('click', () => {
+            const currentTheme = body.getAttribute('data-theme');
+            const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+            
+            body.setAttribute('data-theme', newTheme);
+            
+            if (newTheme === 'light') {
+                themeIcon.textContent = '☀️';
+                themeText.textContent = 'Light';
+            } else {
+                themeIcon.textContent = '🌙';
+                themeText.textContent = 'Dark';
+            }
+            
+            // Reinitialize Three.js scene with new theme
+            initThreeJS();
+        });
+
+        // Three.js Background
+        let scene, camera, renderer, particles;
+
+        function initThreeJS() {
+            const canvas = document.getElementById('three-canvas');
+            const isDark = body.getAttribute('data-theme') === 'dark';
+            
+            // Clear previous scene
+            if (renderer) {
+                renderer.dispose();
+            }
+            
+            scene = new THREE.Scene();
+            camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+            renderer = new THREE.WebGLRenderer({ canvas: canvas, alpha: true });
+            renderer.setSize(window.innerWidth, window.innerHeight);
+            
+            // Create particle system
+            const particleCount = 100;
+            const positions = new Float32Array(particleCount * 3);
+            const colors = new Float32Array(particleCount * 3);
+            
+            const color1 = isDark ? new THREE.Color(0x4a90ff) : new THREE.Color(0xe91e63);
+            const color2 = isDark ? new THREE.Color(0x6b73ff) : new THREE.Color(0xff69b4);
+            
+            for (let i = 0; i < particleCount; i++) {
+                positions[i * 3] = (Math.random() - 0.5) * 20;
+                positions[i * 3 + 1] = (Math.random() - 0.5) * 20;
+                positions[i * 3 + 2] = (Math.random() - 0.5) * 20;
+                
+                const color = Math.random() > 0.5 ? color1 : color2;
+                colors[i * 3] = color.r;
+                colors[i * 3 + 1] = color.g;
+                colors[i * 3 + 2] = color.b;
+            }
+            
+            const geometry = new THREE.BufferGeometry();
+            geometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+            geometry.setAttribute('color', new THREE.BufferAttribute(colors, 3));
+            
+            const material = new THREE.PointsMaterial({
+                size: 0.1,
+                vertexColors: true,
+                transparent: true,
+                opacity: 0.8
+            });
+            
+            particles = new THREE.Points(geometry, material);
+            scene.add(particles);
+            
+            camera.position.z = 5;
+            
+            animate();
+        }
+        
+        function animate() {
+            requestAnimationFrame(animate);
+            
+            if (particles) {
+                particles.rotation.x += 0.001;
+                particles.rotation.y += 0.002;
+            }
+            
+            renderer.render(scene, camera);
+        }
+        
+        // Initialize Three.js
+        initThreeJS();
+        
+        // Handle window resize
+        window.addEventListener('resize', () => {
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+        });
+
+        // Lightning Effect
+        function createLightning() {
+            const lightning = document.createElement('div');
+            lightning.className = 'lightning';
+            lightning.style.left = Math.random() * window.innerWidth + 'px';
+            lightning.style.height = Math.random() * 200 + 100 + 'px';
+            lightning.style.animationDelay = Math.random() * 2 + 's';
+            lightning.style.animationDuration = Math.random() * 2 + 2 + 's';
+            
+            document.body.appendChild(lightning);
+            
+            setTimeout(() => {
+                lightning.remove();
+            }, 5000);
+        }
+
+        // Create lightning periodically
+        setInterval(createLightning, 3000);
+
+        // Floating Particles
+        function createParticle() {
+            const particle = document.createElement('div');
+            particle.className = 'particle';
+            particle.style.left = Math.random() * window.innerWidth + 'px';
+            particle.style.animationDelay = Math.random() * 2 + 's';
+            particle.style.animationDuration = Math.random() * 4 + 4 + 's';
+            
+            document.getElementById('particles').appendChild(particle);
+            
+            setTimeout(() => {
+                particle.remove();
+            }, 8000);
+        }
+
+        // Create particles periodically
+        setInterval(createParticle, 500);
+
+        // Smooth Scrolling
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
+        });
+
+        // Skill bars animation on scroll
+        const observerOptions = {
+            threshold: 0.5,
+            rootMargin: '0px 0px -50px 0px'
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    const skillBars = entry.target.querySelectorAll('.skill-progress');
+                    skillBars.forEach(bar => {
+                        const width = bar.style.width;
+                        bar.style.width = '0%';
+                        setTimeout(() => {
+                            bar.style.width = width;
+                        }, 200);
+                    });
+                }
+            });
+        }, observerOptions);
+
+        document.querySelectorAll('.skills-grid').forEach(grid => {
+            observer.observe(grid);
+        });
+
+        // Code Editor Functionality
+        function runCode() {
+            const codeInput = document.querySelector('.code-input');
+            const codeOutput = document.getElementById('codeOutput');
+            const code = codeInput.value;
+            
+            // Clear previous output
+            codeOutput.innerHTML = '<div style="color: var(--text-secondary); margin-bottom: 0.5rem;">Output:</div>';
+            
+            // Create a custom console for capturing output
+            const output = [];
+            const customConsole = {
+                log: (...args) => {
+                    output.push(args.map(arg => 
+                        typeof arg === 'object' ? JSON.stringify(arg, null, 2) : String(arg)
+                    ).join(' '));
+                },
+                error: (...args) => {
+                    output.push(`❌ Error: ${args.join(' ')}`);
+                },
+                warn: (...args) => {
+                    output.push(`⚠️ Warning: ${args.join(' ')}`);
+                }
+            };
+            
+            try {
+                // Create a function with custom console
+                const func = new Function('console', code);
+                func(customConsole);
+                
+                // Display output
+                if (output.length === 0) {
+                    codeOutput.innerHTML += '<div style="color: var(--text-secondary);">No output (code executed successfully)</div>';
+                } else {
+                    output.forEach(line => {
+                        const outputLine = document.createElement('div');
+                        outputLine.textContent = line;
+                        outputLine.style.color = line.startsWith('❌') ? '#ff6b6b' : 
+                                                 line.startsWith('⚠️') ? '#ffd93d' : '#00ff00';
+                        outputLine.style.marginBottom = '0.25rem';
+                        codeOutput.appendChild(outputLine);
+                    });
+                }
+            } catch (error) {
+                const errorLine = document.createElement('div');
+                errorLine.textContent = `❌ ${error.message}`;
+                errorLine.style.color = '#ff6b6b';
+                codeOutput.appendChild(errorLine);
+            }
+        }
+
+        // Keyboard navigation support
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Tab') {
+                document.body.classList.add('keyboard-nav');
+            }
+        });
+
+        document.addEventListener('mousedown', () => {
+            document.body.classList.remove('keyboard-nav');
+        });
+
+        // Add keyboard navigation styles
+        const style = document.createElement('style');
+        style.textContent = `
+            .keyboard-nav *:focus {
+                outline: 2px solid var(--accent) !important;
+                outline-offset: 2px !important;
+            }
+        `;
+        document.head.appendChild(style);
+
+        // Parallax effect for hero section
+        window.addEventListener('scroll', () => {
+            const scrolled = window.pageYOffset;
+            const hero = document.getElementById('hero');
+            const rate = scrolled * -0.5;
+            
+            if (hero) {
+                hero.style.transform = `translateY(${rate}px)`;
+            }
+        });
+
+        // Add sound effects (optional - can be muted)
+        const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+        let isMuted = false;
+
+        function playTone(frequency, duration, type = 'sine') {
+            if (isMuted) return;
+            
+            const oscillator = audioContext.createOscillator();
+            const gainNode = audioContext.createGain();
+            
+            oscillator.connect(gainNode);
+            gainNode.connect(audioContext.destination);
+            
+            oscillator.frequency.value = frequency;
+            oscillator.type = type;
+            
+            gainNode.gain.setValueAtTime(0.1, audioContext.currentTime);
+            gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + duration);
+            
+            oscillator.start(audioContext.currentTime);
+            oscillator.stop(audioContext.currentTime + duration);
+        }
+
+        // Add hover sound effects
+        document.querySelectorAll('.cta-button, .project-link, .run-button').forEach(button => {
+            button.addEventListener('mouseenter', () => {
+                playTone(800, 0.1);
+            });
+            
+            button.addEventListener('click', () => {
+                playTone(1000, 0.2);
+            });
+        });
+
+        // Theme toggle sound
+        themeToggle.addEventListener('click', () => {
+            playTone(600, 0.3, 'square');
+        });
+
+        // Add loading animation
+        window.addEventListener('load', () => {
+            document.body.style.opacity = '0';
+            document.body.style.transition = 'opacity 0.5s ease';
+            
+            setTimeout(() => {
+                document.body.style.opacity = '1';
+            }, 100);
+        });
+
+        // Add ARIA live region for dynamic content
+        const liveRegion = document.createElement('div');
+        liveRegion.setAttribute('aria-live', 'polite');
+        liveRegion.setAttribute('aria-atomic', 'true');
+        liveRegion.style.position = 'absolute';
+        liveRegion.style.left = '-10000px';
+        liveRegion.style.width = '1px';
+        liveRegion.style.height = '1px';
+        liveRegion.style.overflow = 'hidden';
+        document.body.appendChild(liveRegion);
+
+        // Announce theme changes
+        themeToggle.addEventListener('click', () => {
+            setTimeout(() => {
+                const theme = body.getAttribute('data-theme');
+                liveRegion.textContent = `Switched to ${theme} theme`;
+            }, 100);
+        });
+
+        // Enhanced accessibility: Skip to main content link
+        const skipLink = document.createElement('a');
+        skipLink.href = '#hero';
+        skipLink.textContent = 'Skip to main content';
+        skipLink.style.position = 'absolute';
+        skipLink.style.top = '-40px';
+        skipLink.style.left = '6px';
+        skipLink.style.background = 'var(--accent)';
+        skipLink.style.color = 'white';
+        skipLink.style.padding = '8px';
+        skipLink.style.textDecoration = 'none';
+        skipLink.style.zIndex = '10000';
+        skipLink.style.transition = 'top 0.3s';
+
+        skipLink.addEventListener('focus', () => {
+            skipLink.style.top = '6px';
+        });
+
+        skipLink.addEventListener('blur', () => {
+            skipLink.style.top = '-40px';
+        });
+
+        document.body.insertBefore(skipLink, document.body.firstChild);
+
+        // Dynamic text animation for hero
+        const heroTitle = document.querySelector('.hero h1');
+        const titles = ['Alex Chen', 'Creative Developer', 'Digital Artist', 'Problem Solver'];
+        let currentIndex = 0;
+
+        function animateTitle() {
+            heroTitle.style.opacity = '0';
+            setTimeout(() => {
+                currentIndex = (currentIndex + 1) % titles.length;
+                heroTitle.textContent = titles[currentIndex];
+                heroTitle.style.opacity = '1';
+            }, 500);
+        }
+
+        // Change title every 4 seconds
+        setInterval(animateTitle, 4000);
+
+        // Add typing effect to code editor placeholder
+        const codeInput = document.querySelector('.code-input');
+        const placeholderText = `// Welcome to the interactive code editor!
+// Try writing some JavaScript below:
+
+console.log('Hello, World!');
+
+// Mathematics
+const sum = (a, b) => a + b;
+console.log('5 + 3 =', sum(5, 3));
+
+// Arrays and loops
+const colors = ['red', 'green', 'blue'];
+colors.forEach(color => console.log('Color:', color));
+
+// Objects
+const developer = {
+    name: 'Alex',
+    skills: ['JavaScript', 'Python', 'React'],
+    isAwesome: true
+};
+
+console.log('Developer info:', developer);`;
+
+        let typingIndex = 0;
+        
+        function typeText() {
+            if (typingIndex < placeholderText.length) {
+                codeInput.value = placeholderText.substring(0, typingIndex + 1);
+                typingIndex++;
+                setTimeout(typeText, 50);
+            }
+        }
+
+        // Start typing effect after page loads
+        setTimeout(typeText, 2000);
+    </script>
+</body>
+</html>
