@@ -1,0 +1,1185 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Frontend Developer Knowledge Hub</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary: #6366f1;
+            --primary-dark: #4f46e5;
+            --secondary: #ec4899;
+            --accent: #06b6d4;
+            --dark: #0f172a;
+            --dark-light: #1e293b;
+            --gray: #64748b;
+            --light: #f1f5f9;
+            --white: #ffffff;
+            --gradient: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+            --shadow: 0 10px 25px rgba(0,0,0,0.1);
+            --shadow-lg: 0 20px 40px rgba(0,0,0,0.15);
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            line-height: 1.6;
+            color: var(--dark);
+            background: var(--dark);
+            overflow-x: hidden;
+        }
+
+        /* Animated Background */
+        .bg-animation {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            background: linear-gradient(45deg, #0f172a, #1e293b, #334155);
+            background-size: 400% 400%;
+            animation: gradientShift 15s ease infinite;
+        }
+
+        @keyframes gradientShift {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        /* Floating particles */
+        .particles {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: -1;
+        }
+
+        .particle {
+            position: absolute;
+            width: 4px;
+            height: 4px;
+            background: var(--primary);
+            border-radius: 50%;
+            opacity: 0.3;
+            animation: float 20s infinite linear;
+        }
+
+        @keyframes float {
+            0% { transform: translateY(100vh) rotate(0deg); }
+            100% { transform: translateY(-100vh) rotate(360deg); }
+        }
+
+        /* Navigation */
+        nav {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+            background: rgba(15, 23, 42, 0.95);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+            transition: all 0.3s ease;
+        }
+
+        .nav-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 1.5rem;
+            font-weight: 700;
+            background: var(--gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+            list-style: none;
+        }
+
+        .nav-links a {
+            color: var(--light);
+            text-decoration: none;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .nav-links a::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: var(--gradient);
+            transition: width 0.3s ease;
+        }
+
+        .nav-links a:hover::after {
+            width: 100%;
+        }
+
+        /* Hero Section */
+        .hero {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding: 2rem;
+            background: transparent;
+            position: relative;
+        }
+
+        .hero-content {
+            max-width: 800px;
+            animation: fadeInUp 1s ease-out;
+        }
+
+        .hero h1 {
+            font-size: clamp(2.5rem, 5vw, 4rem);
+            font-weight: 800;
+            margin-bottom: 1rem;
+            background: var(--gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            line-height: 1.2;
+        }
+
+        .hero p {
+            font-size: 1.25rem;
+            color: var(--light);
+            margin-bottom: 2rem;
+            opacity: 0.9;
+        }
+
+        .cta-buttons {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            padding: 1rem 2rem;
+            border: none;
+            border-radius: 50px;
+            font-weight: 600;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn-primary {
+            background: var(--gradient);
+            color: white;
+            box-shadow: var(--shadow);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-3px);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .btn-secondary {
+            background: transparent;
+            color: var(--light);
+            border: 2px solid var(--primary);
+        }
+
+        .btn-secondary:hover {
+            background: var(--primary);
+            transform: translateY(-3px);
+        }
+
+        /* Main Content */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 2rem;
+        }
+
+        .section {
+            padding: 5rem 0;
+            position: relative;
+        }
+
+        .section-title {
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+
+        .section-title h2 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: var(--light);
+            margin-bottom: 1rem;
+            position: relative;
+        }
+
+        .section-title p {
+            font-size: 1.1rem;
+            color: var(--gray);
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        /* Concept Cards Grid */
+        .concepts-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 2rem;
+            margin-top: 3rem;
+        }
+
+        .concept-card {
+            background: rgba(255,255,255,0.05);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 20px;
+            padding: 2rem;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .concept-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: var(--gradient);
+            transform: scaleX(0);
+            transition: transform 0.3s ease;
+        }
+
+        .concept-card:hover::before {
+            transform: scaleX(1);
+        }
+
+        .concept-card:hover {
+            transform: translateY(-10px);
+            box-shadow: var(--shadow-lg);
+            border-color: rgba(255,255,255,0.2);
+        }
+
+        .concept-icon {
+            width: 60px;
+            height: 60px;
+            background: var(--gradient);
+            border-radius: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 1.5rem;
+            font-size: 1.5rem;
+        }
+
+        .concept-card h3 {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: var(--light);
+            margin-bottom: 1rem;
+        }
+
+        .concept-card p {
+            color: var(--gray);
+            margin-bottom: 1.5rem;
+        }
+
+        .code-example {
+            background: rgba(0,0,0,0.3);
+            border-radius: 10px;
+            padding: 1rem;
+            font-family: 'Monaco', 'Consolas', monospace;
+            font-size: 0.9rem;
+            overflow-x: auto;
+            border: 1px solid rgba(255,255,255,0.1);
+            position: relative;
+        }
+
+        .code-example::before {
+            content: 'JS';
+            position: absolute;
+            top: 0.5rem;
+            right: 0.5rem;
+            background: var(--primary);
+            color: white;
+            padding: 0.25rem 0.5rem;
+            border-radius: 4px;
+            font-size: 0.7rem;
+        }
+
+        .code-example code {
+            color: #e2e8f0;
+        }
+
+        .keyword { color: #f472b6; }
+        .string { color: #34d399; }
+        .function { color: #60a5fa; }
+        .comment { color: #6b7280; font-style: italic; }
+
+        /* Interactive Demo Section */
+        .demo-container {
+            background: rgba(255,255,255,0.05);
+            border-radius: 20px;
+            padding: 2rem;
+            margin: 3rem 0;
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .demo-controls {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 2rem;
+            flex-wrap: wrap;
+        }
+
+        .demo-btn {
+            padding: 0.75rem 1.5rem;
+            background: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: 500;
+        }
+
+        .demo-btn:hover {
+            background: var(--primary-dark);
+            transform: translateY(-2px);
+        }
+
+        .demo-btn.active {
+            background: var(--secondary);
+        }
+
+        #demo-output {
+            min-height: 200px;
+            background: rgba(0,0,0,0.3);
+            border-radius: 15px;
+            padding: 2rem;
+            border: 1px solid rgba(255,255,255,0.1);
+            color: var(--light);
+            font-family: monospace;
+            overflow: auto;
+        }
+
+        /* Animations */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .fade-in {
+            animation: fadeInUp 0.8s ease-out;
+        }
+
+        /* Skills Progress Bars */
+        .skills-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin-top: 2rem;
+        }
+
+        .skill-item {
+            background: rgba(255,255,255,0.05);
+            padding: 1.5rem;
+            border-radius: 15px;
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .skill-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 1rem;
+        }
+
+        .skill-name {
+            color: var(--light);
+            font-weight: 600;
+        }
+
+        .skill-level {
+            color: var(--primary);
+            font-weight: 600;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 8px;
+            background: rgba(255,255,255,0.1);
+            border-radius: 4px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: var(--gradient);
+            border-radius: 4px;
+            transition: width 2s ease-in-out;
+            width: 0%;
+        }
+
+        /* Footer */
+        footer {
+            background: rgba(0,0,0,0.5);
+            text-align: center;
+            padding: 3rem 2rem;
+            color: var(--gray);
+            border-top: 1px solid rgba(255,255,255,0.1);
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .nav-links {
+                display: none;
+            }
+            
+            .hero h1 {
+                font-size: 2.5rem;
+            }
+            
+            .concepts-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .cta-buttons {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            .demo-controls {
+                justify-content: center;
+            }
+        }
+
+        /* Scroll indicator */
+        .scroll-indicator {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background: rgba(255,255,255,0.1);
+            z-index: 1001;
+        }
+
+        .scroll-progress {
+            height: 100%;
+            background: var(--gradient);
+            width: 0%;
+            transition: width 0.1s ease;
+        }
+    </style>
+</head>
+<body>
+    <div class="bg-animation"></div>
+    <div class="particles" id="particles"></div>
+    
+    <div class="scroll-indicator">
+        <div class="scroll-progress" id="scrollProgress"></div>
+    </div>
+
+    <nav>
+        <div class="nav-container">
+            <div class="logo">DevHub</div>
+            <ul class="nav-links">
+                <li><a href="#concepts">Concepts</a></li>
+                <li><a href="#demos">Demos</a></li>
+                <li><a href="#skills">Skills</a></li>
+                <li><a href="#contact">Contact</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <section class="hero">
+        <div class="hero-content">
+            <h1>Frontend Developer Knowledge Hub</h1>
+            <p>Mastering modern web development concepts with interactive examples and real-world applications</p>
+            <div class="cta-buttons">
+                <a href="#concepts" class="btn btn-primary">Explore Concepts</a>
+                <a href="#demos" class="btn btn-secondary">Try Demos</a>
+            </div>
+        </div>
+    </section>
+
+    <section class="section" id="concepts">
+        <div class="container">
+            <div class="section-title">
+                <h2>Core Frontend Concepts</h2>
+                <p>Essential knowledge every frontend developer should master</p>
+            </div>
+            
+            <div class="concepts-grid">
+                <div class="concept-card fade-in">
+                    <div class="concept-icon">🎯</div>
+                    <h3>DOM Manipulation</h3>
+                    <p>Understanding how to dynamically modify HTML elements and handle user interactions efficiently.</p>
+                    <div class="code-example">
+                        <code>
+<span class="comment">// Modern DOM manipulation</span>
+<span class="keyword">const</span> <span class="function">updateElement</span> = <span class="keyword">(</span>selector, content<span class="keyword">)</span> => {
+  <span class="keyword">const</span> element = document.<span class="function">querySelector</span><span class="keyword">(</span><span class="string">'${selector}'</span><span class="keyword">)</span>;
+  <span class="keyword">if</span> <span class="keyword">(</span>element<span class="keyword">)</span> {
+    element.textContent = content;
+    element.classList.<span class="function">add</span><span class="keyword">(</span><span class="string">'updated'</span><span class="keyword">)</span>;
+  }
+};
+                        </code>
+                    </div>
+                </div>
+
+                <div class="concept-card fade-in">
+                    <div class="concept-icon">⚡</div>
+                    <h3>Async JavaScript</h3>
+                    <p>Mastering Promises, async/await, and handling asynchronous operations for smooth user experiences.</p>
+                    <div class="code-example">
+                        <code>
+<span class="comment">// Modern async data fetching</span>
+<span class="keyword">const</span> <span class="function">fetchUserData</span> = <span class="keyword">async</span> <span class="keyword">(</span>userId<span class="keyword">)</span> => {
+  <span class="keyword">try</span> {
+    <span class="keyword">const</span> response = <span class="keyword">await</span> <span class="function">fetch</span><span class="keyword">(</span><span class="string">`/api/users/${userId}`</span><span class="keyword">)</span>;
+    <span class="keyword">const</span> userData = <span class="keyword">await</span> response.<span class="function">json</span><span class="keyword">()</span>;
+    <span class="keyword">return</span> userData;
+  } <span class="keyword">catch</span> <span class="keyword">(</span>error<span class="keyword">)</span> {
+    console.<span class="function">error</span><span class="keyword">(</span><span class="string">'Failed to fetch user:'</span>, error<span class="keyword">)</span>;
+  }
+};
+                        </code>
+                    </div>
+                </div>
+
+                <div class="concept-card fade-in">
+                    <div class="concept-icon">🎨</div>
+                    <h3>CSS Grid & Flexbox</h3>
+                    <p>Creating responsive layouts with modern CSS layout systems for optimal user experience across devices.</p>
+                    <div class="code-example">
+                        <code>
+<span class="comment">/* Responsive grid layout */</span>
+<span class="keyword">.gallery</span> {
+  <span class="function">display</span>: grid;
+  <span class="function">grid-template-columns</span>: <span class="function">repeat</span><span class="keyword">(</span><span class="function">auto-fit</span>, <span class="function">minmax</span><span class="keyword">(</span><span class="string">300px</span>, <span class="string">1fr</span><span class="keyword">))</span>;
+  <span class="function">gap</span>: <span class="string">2rem</span>;
+  <span class="function">padding</span>: <span class="string">2rem</span>;
+}
+
+<span class="keyword">.card</span> {
+  <span class="function">display</span>: flex;
+  <span class="function">flex-direction</span>: column;
+  <span class="function">justify-content</span>: space-between;
+}
+                        </code>
+                    </div>
+                </div>
+
+                <div class="concept-card fade-in">
+                    <div class="concept-icon">🔄</div>
+                    <h3>State Management</h3>
+                    <p>Managing application state effectively using modern patterns and avoiding common pitfalls.</p>
+                    <div class="code-example">
+                        <code>
+<span class="comment">// Simple state management pattern</span>
+<span class="keyword">class</span> <span class="function">StateManager</span> {
+  <span class="function">constructor</span><span class="keyword">()</span> {
+    <span class="keyword">this</span>.state = {};
+    <span class="keyword">this</span>.subscribers = [];
+  }
+  
+  <span class="function">setState</span><span class="keyword">(</span>newState<span class="keyword">)</span> {
+    <span class="keyword">this</span>.state = { ...<span class="keyword">this</span>.state, ...newState };
+    <span class="keyword">this</span>.<span class="function">notify</span><span class="keyword">()</span>;
+  }
+  
+  <span class="function">subscribe</span><span class="keyword">(</span>callback<span class="keyword">)</span> {
+    <span class="keyword">this</span>.subscribers.<span class="function">push</span><span class="keyword">(</span>callback<span class="keyword">)</span>;
+  }
+}
+                        </code>
+                    </div>
+                </div>
+
+                <div class="concept-card fade-in">
+                    <div class="concept-icon">📱</div>
+                    <h3>Responsive Design</h3>
+                    <p>Creating adaptive interfaces that work seamlessly across all devices and screen sizes.</p>
+                    <div class="code-example">
+                        <code>
+<span class="comment">/* Mobile-first responsive design */</span>
+<span class="keyword">.container</span> {
+  <span class="function">width</span>: <span class="string">100%</span>;
+  <span class="function">padding</span>: <span class="string">1rem</span>;
+}
+
+<span class="keyword">@media</span> <span class="keyword">(</span><span class="function">min-width</span>: <span class="string">768px</span><span class="keyword">)</span> {
+  <span class="keyword">.container</span> {
+    <span class="function">max-width</span>: <span class="string">1200px</span>;
+    <span class="function">margin</span>: <span class="string">0 auto</span>;
+    <span class="function">padding</span>: <span class="string">2rem</span>;
+  }
+}
+                        </code>
+                    </div>
+                </div>
+
+                <div class="concept-card fade-in">
+                    <div class="concept-icon">⚡</div>
+                    <h3>Performance Optimization</h3>
+                    <p>Implementing best practices for fast loading times and smooth user interactions.</p>
+                    <div class="code-example">
+                        <code>
+<span class="comment">// Lazy loading and debouncing</span>
+<span class="keyword">const</span> <span class="function">debounce</span> = <span class="keyword">(</span>func, delay<span class="keyword">)</span> => {
+  <span class="keyword">let</span> timeoutId;
+  <span class="keyword">return</span> <span class="keyword">(</span>...args<span class="keyword">)</span> => {
+    <span class="function">clearTimeout</span><span class="keyword">(</span>timeoutId<span class="keyword">)</span>;
+    timeoutId = <span class="function">setTimeout</span><span class="keyword">(</span><span class="keyword">()</span> => func.<span class="function">apply</span><span class="keyword">(</span><span class="keyword">this</span>, args<span class="keyword">)</span>, delay<span class="keyword">)</span>;
+  };
+};
+
+<span class="keyword">const</span> <span class="function">lazyLoad</span> = <span class="function">debounce</span><span class="keyword">(</span><span class="function">loadImages</span>, <span class="string">300</span><span class="keyword">)</span>;
+                        </code>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="section" id="demos">
+        <div class="container">
+            <div class="section-title">
+                <h2>Interactive Demonstrations</h2>
+                <p>See these concepts in action with live, interactive examples</p>
+            </div>
+            
+            <div class="demo-container">
+                <div class="demo-controls">
+                    <button class="demo-btn active" onclick="showDemo('dom')">DOM Manipulation</button>
+                    <button class="demo-btn" onclick="showDemo('async')">Async Operations</button>
+                    <button class="demo-btn" onclick="showDemo('animation')">CSS Animations</button>
+                    <button class="demo-btn" onclick="showDemo('responsive')">Responsive Design</button>
+                </div>
+                <div id="demo-output"></div>
+            </div>
+        </div>
+    </section>
+
+    <section class="section" id="skills">
+        <div class="container">
+            <div class="section-title">
+                <h2>Technical Skills</h2>
+                <p>Proficiency levels in key frontend technologies</p>
+            </div>
+            
+            <div class="skills-grid">
+                <div class="skill-item">
+                    <div class="skill-header">
+                        <span class="skill-name">JavaScript (ES6+)</span>
+                        <span class="skill-level">95%</span>
+                    </div>
+                    <div class="progress-bar">
+                        <div class="progress-fill" data-width="95"></div>
+                    </div>
+                </div>
+                
+                <div class="skill-item">
+                    <div class="skill-header">
+                        <span class="skill-name">React.js</span>
+                        <span class="skill-level">90%</span>
+                    </div>
+                    <div class="progress-bar">
+                        <div class="progress-fill" data-width="90"></div>
+                    </div>
+                </div>
+                
+                <div class="skill-item">
+                    <div class="skill-header">
+                        <span class="skill-name">CSS3 & Sass</span>
+                        <span class="skill-level">92%</span>
+                    </div>
+                    <div class="progress-bar">
+                        <div class="progress-fill" data-width="92"></div>
+                    </div>
+                </div>
+                
+                <div class="skill-item">
+                    <div class="skill-header">
+                        <span class="skill-name">TypeScript</span>
+                        <span class="skill-level">85%</span>
+                    </div>
+                    <div class="progress-bar">
+                        <div class="progress-fill" data-width="85"></div>
+                    </div>
+                </div>
+                
+                <div class="skill-item">
+                    <div class="skill-header">
+                        <span class="skill-name">Node.js</span>
+                        <span class="skill-level">80%</span>
+                    </div>
+                    <div class="progress-bar">
+                        <div class="progress-fill" data-width="80"></div>
+                    </div>
+                </div>
+                
+                <div class="skill-item">
+                    <div class="skill-header">
+                        <span class="skill-name">Git & Version Control</span>
+                        <span class="skill-level">88%</span>
+                    </div>
+                    <div class="progress-bar">
+                        <div class="progress-fill" data-width="88"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <footer id="contact">
+        <div class="container">
+            <p>Frontend Developer Knowledge Hub - Showcasing modern web development skills</p>
+            <p>Built with HTML5, CSS3, and Vanilla JavaScript</p>
+        </div>
+    </footer>
+
+    <script>
+        // Initialize particles
+        function createParticles() {
+            const particlesContainer = document.getElementById('particles');
+            const particleCount = 50;
+            
+            for (let i = 0; i < particleCount; i++) {
+                const particle = document.createElement('div');
+                particle.className = 'particle';
+                particle.style.left = Math.random() * 100 + '%';
+                particle.style.animationDelay = Math.random() * 20 + 's';
+                particle.style.animationDuration = (Math.random() * 10 + 10) + 's';
+                particlesContainer.appendChild(particle);
+            }
+        }
+
+        // Scroll progress indicator
+        function updateScrollProgress() {
+            const scrollTop = window.pageYOffset;
+            const docHeight = document.body.scrollHeight - window.innerHeight;
+            const scrollPercent = (scrollTop / docHeight) * 100;
+            document.getElementById('scrollProgress').style.width = scrollPercent + '%';
+        }
+
+        // Animate skill progress bars
+        function animateSkillBars() {
+            const skillBars = document.querySelectorAll('.progress-fill');
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        const width = entry.target.getAttribute('data-width');
+                        entry.target.style.width = width + '%';
+                    }
+                });
+            });
+
+            skillBars.forEach(bar => observer.observe(bar));
+        }
+
+        // Demo functionality
+        function showDemo(type) {
+            // Update active button
+            document.querySelectorAll('.demo-btn').forEach(btn => btn.classList.remove('active'));
+            event.target.classList.add('active');
+            
+            const output = document.getElementById('demo-output');
+            
+            switch(type) {
+                case 'dom':
+                    output.innerHTML = `
+                        <h3 style="color: var(--primary); margin-bottom: 1rem;">DOM Manipulation Demo</h3>
+                        <button onclick="addElement()" style="margin: 0.5rem; padding: 0.5rem 1rem; background: var(--primary); color: white; border: none; border-radius: 5px; cursor: pointer;">Add Element</button>
+                        <button onclick="removeElement()" style="margin: 0.5rem; padding: 0.5rem 1rem; background: var(--secondary); color: white; border: none; border-radius: 5px; cursor: pointer;">Remove Element</button>
+                        <button onclick="toggleTheme()" style="margin: 0.5rem; padding: 0.5rem 1rem; background: var(--accent); color: white; border: none; border-radius: 5px; cursor: pointer;">Toggle Theme</button>
+                        <div id="dynamic-content" style="margin-top: 1rem; padding: 1rem; background: rgba(255,255,255,0.1); border-radius: 10px; min-height: 100px;">
+                            <p style="color: var(--light);">Click the buttons above to see DOM manipulation in action!</p>
+                        </div>
+                    `;
+                    break;
+                case 'async':
+                    output.innerHTML = `
+                        <h3 style="color: var(--primary); margin-bottom: 1rem;">Async Operations Demo</h3>
+                        <button onclick="simulateApiCall()" style="margin: 0.5rem; padding: 0.5rem 1rem; background: var(--primary); color: white; border: none; border-radius: 5px; cursor: pointer;">Simulate API Call</button>
+                        <button onclick="multipleRequests()" style="margin: 0.5rem; padding: 0.5rem 1rem; background: var(--secondary); color: white; border: none; border-radius: 5px; cursor: pointer;">Multiple Requests</button>
+                        <button onclick="promiseChain()" style="margin: 0.5rem; padding: 0.5rem 1rem; background: var(--accent); color: white; border: none; border-radius: 5px; cursor: pointer;">Promise Chain</button>
+                        <div id="async-output" style="margin-top: 1rem; padding: 1rem; background: rgba(255,255,255,0.1); border-radius: 10px; min-height: 100px;">
+                            <p style="color: var(--light);">Try the async operation buttons to see Promises and async/await in action!</p>
+                        </div>
+                    `;
+                    break;
+                case 'animation':
+                    output.innerHTML = `
+                        <h3 style="color: var(--primary); margin-bottom: 1rem;">CSS Animation Demo</h3>
+                        <button onclick="startAnimation('bounce')" style="margin: 0.5rem; padding: 0.5rem 1rem; background: var(--primary); color: white; border: none; border-radius: 5px; cursor: pointer;">Bounce</button>
+                        <button onclick="startAnimation('rotate')" style="margin: 0.5rem; padding: 0.5rem 1rem; background: var(--secondary); color: white; border: none; border-radius: 5px; cursor: pointer;">Rotate</button>
+                        <button onclick="startAnimation('pulse')" style="margin: 0.5rem; padding: 0.5rem 1rem; background: var(--accent); color: white; border: none; border-radius: 5px; cursor: pointer;">Pulse</button>
+                        <div style="margin-top: 1rem; padding: 2rem; background: rgba(255,255,255,0.1); border-radius: 10px; text-align: center; min-height: 150px; display: flex; align-items: center; justify-content: center;">
+                            <div id="animation-box" style="width: 80px; height: 80px; background: var(--gradient); border-radius: 15px; transition: all 0.3s ease;"></div>
+                        </div>
+                    `;
+                    break;
+                case 'responsive':
+                    output.innerHTML = `
+                        <h3 style="color: var(--primary); margin-bottom: 1rem;">Responsive Design Demo</h3>
+                        <p style="color: var(--light); margin-bottom: 1rem;">Resize your browser window to see the responsive grid in action!</p>
+                        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 1rem; margin-top: 1rem;">
+                            <div style="background: var(--primary); padding: 1rem; border-radius: 10px; text-align: center; color: white;">Box 1</div>
+                            <div style="background: var(--secondary); padding: 1rem; border-radius: 10px; text-align: center; color: white;">Box 2</div>
+                            <div style="background: var(--accent); padding: 1rem; border-radius: 10px; text-align: center; color: white;">Box 3</div>
+                            <div style="background: var(--primary); padding: 1rem; border-radius: 10px; text-align: center; color: white;">Box 4</div>
+                        </div>
+                        <div style="margin-top: 1rem; padding: 1rem; background: rgba(255,255,255,0.1); border-radius: 10px;">
+                            <p style="color: var(--light); font-size: 0.9rem;">Current viewport: <span id="viewport-size"></span></p>
+                        </div>
+                    `;
+                    updateViewportSize();
+                    break;
+            }
+        }
+
+        // DOM Manipulation functions
+        let elementCounter = 0;
+        function addElement() {
+            const container = document.getElementById('dynamic-content');
+            const newElement = document.createElement('div');
+            newElement.style.cssText = `
+                background: var(--gradient);
+                padding: 0.75rem;
+                margin: 0.5rem 0;
+                border-radius: 8px;
+                color: white;
+                opacity: 0;
+                transform: translateY(20px);
+                transition: all 0.3s ease;
+            `;
+            newElement.textContent = `Dynamic Element #${++elementCounter}`;
+            newElement.onclick = () => newElement.remove();
+            container.appendChild(newElement);
+            
+            // Animate in
+            setTimeout(() => {
+                newElement.style.opacity = '1';
+                newElement.style.transform = 'translateY(0)';
+            }, 10);
+        }
+
+        function removeElement() {
+            const container = document.getElementById('dynamic-content');
+            const elements = container.querySelectorAll('div');
+            if (elements.length > 1) {
+                const lastElement = elements[elements.length - 1];
+                lastElement.style.opacity = '0';
+                lastElement.style.transform = 'translateY(-20px)';
+                setTimeout(() => lastElement.remove(), 300);
+            }
+        }
+
+        let isDarkTheme = true;
+        function toggleTheme() {
+            const container = document.getElementById('dynamic-content');
+            if (isDarkTheme) {
+                container.style.background = 'rgba(255,255,255,0.9)';
+                container.style.color = 'var(--dark)';
+            } else {
+                container.style.background = 'rgba(255,255,255,0.1)';
+                container.style.color = 'var(--light)';
+            }
+            isDarkTheme = !isDarkTheme;
+        }
+
+        // Async operation functions
+        async function simulateApiCall() {
+            const output = document.getElementById('async-output');
+            output.innerHTML = '<p style="color: var(--accent);">⏳ Loading data...</p>';
+            
+            try {
+                // Simulate API call with delay
+                await new Promise(resolve => setTimeout(resolve, 2000));
+                const data = {
+                    id: Math.floor(Math.random() * 1000),
+                    name: 'Sample User',
+                    timestamp: new Date().toLocaleTimeString()
+                };
+                
+                output.innerHTML = `
+                    <p style="color: var(--primary);">✅ Data fetched successfully!</p>
+                    <pre style="background: rgba(0,0,0,0.3); padding: 1rem; border-radius: 5px; margin-top: 1rem; color: var(--light);">${JSON.stringify(data, null, 2)}</pre>
+                `;
+            } catch (error) {
+                output.innerHTML = '<p style="color: var(--secondary);">❌ Error fetching data</p>';
+            }
+        }
+
+        async function multipleRequests() {
+            const output = document.getElementById('async-output');
+            output.innerHTML = '<p style="color: var(--accent);">⏳ Making multiple requests...</p>';
+            
+            const requests = [
+                fetch('https://jsonplaceholder.typicode.com/posts/1'),
+                fetch('https://jsonplaceholder.typicode.com/posts/2'),
+                fetch('https://jsonplaceholder.typicode.com/posts/3')
+            ];
+            
+            try {
+                const responses = await Promise.all(requests);
+                const data = await Promise.all(responses.map(r => r.json()));
+                
+                output.innerHTML = `
+                    <p style="color: var(--primary);">✅ All requests completed!</p>
+                    <p style="color: var(--light);">Fetched ${data.length} posts from JSONPlaceholder API</p>
+                    <div style="max-height: 200px; overflow-y: auto; margin-top: 1rem;">
+                        ${data.map(post => `<div style="background: rgba(0,0,0,0.3); padding: 0.5rem; margin: 0.5rem 0; border-radius: 5px; color: var(--light);"><strong>${post.title}</strong></div>`).join('')}
+                    </div>
+                `;
+            } catch (error) {
+                output.innerHTML = '<p style="color: var(--secondary);">❌ Some requests failed</p>';
+            }
+        }
+
+        async function promiseChain() {
+            const output = document.getElementById('async-output');
+            output.innerHTML = '<p style="color: var(--accent);">⏳ Executing promise chain...</p>';
+            
+            const step1 = () => new Promise(resolve => {
+                setTimeout(() => resolve('Step 1 completed'), 800);
+            });
+            
+            const step2 = (data) => new Promise(resolve => {
+                setTimeout(() => resolve(data + ' → Step 2 completed'), 800);
+            });
+            
+            const step3 = (data) => new Promise(resolve => {
+                setTimeout(() => resolve(data + ' → Step 3 completed'), 800);
+            });
+            
+            try {
+                const result = await step1()
+                    .then(step2)
+                    .then(step3);
+                
+                output.innerHTML = `
+                    <p style="color: var(--primary);">✅ Promise chain completed!</p>
+                    <p style="color: var(--light); background: rgba(0,0,0,0.3); padding: 1rem; border-radius: 5px; margin-top: 1rem;">${result}</p>
+                `;
+            } catch (error) {
+                output.innerHTML = '<p style="color: var(--secondary);">❌ Promise chain failed</p>';
+            }
+        }
+
+        // Animation functions
+        function startAnimation(type) {
+            const box = document.getElementById('animation-box');
+            box.style.animation = 'none';
+            
+            setTimeout(() => {
+                switch(type) {
+                    case 'bounce':
+                        box.style.animation = 'bounce 1s ease-in-out';
+                        break;
+                    case 'rotate':
+                        box.style.animation = 'rotate360 1s ease-in-out';
+                        break;
+                    case 'pulse':
+                        box.style.animation = 'pulse 1s ease-in-out';
+                        break;
+                }
+            }, 10);
+        }
+
+        // Add animation keyframes
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes bounce {
+                0%, 100% { transform: translateY(0); }
+                50% { transform: translateY(-30px); }
+            }
+            
+            @keyframes rotate360 {
+                from { transform: rotate(0deg); }
+                to { transform: rotate(360deg); }
+            }
+            
+            @keyframes pulse {
+                0% { transform: scale(1); }
+                50% { transform: scale(1.2); }
+                100% { transform: scale(1); }
+            }
+        `;
+        document.head.appendChild(style);
+
+        // Responsive demo functions
+        function updateViewportSize() {
+            const sizeElement = document.getElementById('viewport-size');
+            if (sizeElement) {
+                sizeElement.textContent = `${window.innerWidth}px × ${window.innerHeight}px`;
+            }
+        }
+
+        // Smooth scrolling for navigation links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
+        });
+
+        // Intersection Observer for fade-in animations
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px'
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.style.opacity = '1';
+                    entry.target.style.transform = 'translateY(0)';
+                }
+            });
+        }, observerOptions);
+
+        // Initialize everything when DOM is loaded
+        document.addEventListener('DOMContentLoaded', function() {
+            createParticles();
+            animateSkillBars();
+            showDemo('dom'); // Show initial demo
+            
+            // Set up fade-in elements
+            document.querySelectorAll('.fade-in').forEach(el => {
+                el.style.opacity = '0';
+                el.style.transform = 'translateY(30px)';
+                el.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
+                observer.observe(el);
+            });
+        });
+
+        // Event listeners
+        window.addEventListener('scroll', updateScrollProgress);
+        window.addEventListener('resize', updateViewportSize);
+
+        // Add typing animation to hero text
+        function typeWriter(element, text, speed = 50) {
+            let i = 0;
+            element.innerHTML = '';
+            
+            function type() {
+                if (i < text.length) {
+                    element.innerHTML += text.charAt(i);
+                    i++;
+                    setTimeout(type, speed);
+                }
+            }
+            type();
+        }
+
+        // Enhanced hover effects for concept cards
+        document.addEventListener('DOMContentLoaded', function() {
+            const cards = document.querySelectorAll('.concept-card');
+            cards.forEach(card => {
+                card.addEventListener('mouseenter', function() {
+                    this.style.transform = 'translateY(-10px) scale(1.02)';
+                });
+                
+                card.addEventListener('mouseleave', function() {
+                    this.style.transform = 'translateY(0) scale(1)';
+                });
+            });
+        });
+
+        // Add loading states and micro-interactions
+        function addRippleEffect(e) {
+            const button = e.currentTarget;
+            const ripple = document.createElement('span');
+            const rect = button.getBoundingClientRect();
+            const size = Math.max(rect.width, rect.height);
+            const x = e.clientX - rect.left - size / 2;
+            const y = e.clientY - rect.top - size / 2;
+            
+            ripple.style.cssText = `
+                position: absolute;
+                width: ${size}px;
+                height: ${size}px;
+                left: ${x}px;
+                top: ${y}px;
+                background: rgba(255,255,255,0.3);
+                border-radius: 50%;
+                transform: scale(0);
+                animation: ripple 0.6s ease-out;
+                pointer-events: none;
+            `;
+            
+            button.style.position = 'relative';
+            button.style.overflow = 'hidden';
+            button.appendChild(ripple);
+            
+            setTimeout(() => ripple.remove(), 600);
+        }
+
+        // Add ripple effect style
+        const rippleStyle = document.createElement('style');
+        rippleStyle.textContent = `
+            @keyframes ripple {
+                to {
+                    transform: scale(2);
+                    opacity: 0;
+                }
+            }
+        `;
+        document.head.appendChild(rippleStyle);
+
+        // Apply ripple effect to buttons
+        document.addEventListener('DOMContentLoaded', function() {
+            document.querySelectorAll('.btn, .demo-btn').forEach(btn => {
+                btn.addEventListener('click', addRippleEffect);
+            });
+        });
+    </script>
+</body>
+</html>
